@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marianna Giusti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --black: #1a1a1a; --gray: #888; --light-gray: #f5f5f4; --border: #e5e5e3; --white: #ffffff; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; color: var(--black); background: var(--white); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  .nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-bottom: 0.5px solid var(--border); padding: 0 2.5rem; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 400; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--gray); transition: color 0.15s; cursor: pointer; }
+  .nav-links a:hover, .nav-links a.active { color: var(--black); }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 2.5rem; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .home-grid { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 56px); }
+  .sidebar { border-right: 0.5px solid var(--border); padding: 3rem 2.5rem 3rem 0; position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; }
+  .hero-name { font-family: 'Playfair Display', serif; font-size: 46px; font-weight: 400; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
+  .hero-name em { font-style: italic; color: var(--gray); }
+  .hero-bio { font-size: 13px; line-height: 1.8; color: var(--gray); font-weight: 300; margin-bottom: 2rem; }
+  .hero-links { display: flex; flex-direction: column; gap: .75rem; }
+  .hero-links a { font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--gray); display: flex; align-items: center; gap: 6px; transition: color 0.15s; }
+  .hero-links a:hover { color: var(--black); }
+  .main-content { padding: 3rem 0 3rem 3rem; }
+  .section { margin-bottom: 3rem; }
+  .section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
+  .section-label { font-size: 10px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--gray); }
+  .article-list { list-style: none; }
+  .article-item { padding: 1.1rem 0; border-bottom: 0.5px solid var(--border); }
+  .article-item:first-child { border-top: 0.5px solid var(--border); }
+  .article-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 6px; }
+  .article-tag { display: inline-block; font-size: 9px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; flex-shrink: 0; margin-bottom: 5px; }
+  .tag-scoop { background: #dbeafe; color: #1e40af; }
+  .tag-front { background: #dcfce7; color: #166534; }
+  .tag-magazine { background: #fef3c7; color: #92400e; }
+  .tag-exclusive { background: #fce7f3; color: #9d174d; }
+  .article-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; line-height: 1.4; color: var(--black); flex: 1; transition: opacity 0.15s; }
+  .article-title:hover { opacity: 0.7; }
+  .article-year { font-size: 11px; color: var(--gray); white-space: nowrap; font-weight: 300; }
+  .article-context { font-size: 12px; color: var(--gray); line-height: 1.65; font-weight: 300; margin-top: 4px; }
+  .video-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; }
+  .video-item:first-child { border-top: 0.5px solid var(--border); }
+  .video-item:hover { opacity: 0.7; }
+  .video-thumb { width: 60px; height: 44px; background: var(--light-gray); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gray); font-size: 18px; }
+  .video-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 400; flex: 1; }
+  .pdf-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; }
+  .pdf-item:first-child { border-top: 0.5px solid var(--border); }
+  .pdf-item:hover { opacity: 0.7; }
+  .pdf-icon { width: 40px; height: 40px; background: var(--light-gray); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 10px; font-weight: 500; color: var(--gray); letter-spacing: .04em; }
+  .pdf-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 400; flex: 1; }
+  .pdf-sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
+  .empty { color: var(--gray); font-size: 12px; padding: 1rem 0; font-style: italic; }
+  footer { border-top: 0.5px solid var(--border); padding: 1.5rem 2.5rem; display: flex; justify-content: space-between; align-items: center; }
+  .footer-name { font-family: 'Playfair Display', serif; font-size: 13px; color: var(--gray); }
+  .footer-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+  .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+  .footer-links a { font-size: 11px; color: var(--gray); letter-spacing: .06em; text-transform: uppercase; transition: color 0.15s; }
+  .footer-links a:hover { color: var(--black); }
+  .ft-all { font-size: 11px; color: var(--gray); }
+  .ft-all a { text-decoration: underline; text-underline-offset: 3px; }
+  .ft-all a:hover { color: var(--black); }
+  .contact-wrap { max-width: 480px; padding: 3rem 2.5rem; }
+  .contact-bio { font-size: 13px; line-height: 1.8; color: var(--gray); font-weight: 300; margin-bottom: 2rem; }
+  .contact-item { display: flex; align-items: center; gap: 1rem; padding: 1.1rem 0; border-bottom: 0.5px solid var(--border); font-size: 14px; transition: opacity 0.15s; }
+  .contact-item:first-child { border-top: 0.5px solid var(--border); }
+  .contact-item:hover { opacity: 0.7; }
+  .contact-item span { flex: 1; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <span class="nav-name">Marianna Giusti</span>
+  <ul class="nav-links">
+    <li><a class="active" onclick="showPage('home',this)">Home</a></li>
+    <li><a onclick="showPage('portfolio',this)">Portfolio</a></li>
+    <li><a onclick="showPage('contact',this)">Contact</a></li>
+  </ul>
+</nav>
+
+<div id="page-home" class="page active">
+  <div class="container">
+    <div class="home-grid">
+      <aside class="sidebar">
+        <h1 class="hero-name">Marianna<br><em>Giusti</em></h1>
+        <p class="hero-bio" id="bio-text"></p>
+        <div class="hero-links">
+          <a href="https://x.com/mauipippa" target="_blank">↗ X / Twitter</a>
+          <a href="https://www.linkedin.com/in/marianna-giusti-466b91a9/" target="_blank">↗ LinkedIn</a>
+        </div>
+      </aside>
+      <main class="main-content">
+        <div class="section">
+          <div class="section-header"><span style="color:var(--gray);">★</span><span class="section-label">Pinned</span></div>
+          <ul class="article-list" id="pinned-list"></ul>
+        </div>
+        <div class="section">
+          <div class="section-header"><span class="section-label">Newspaper</span></div>
+          <ul class="article-list" id="newspaper-list"></ul>
+        </div>
+        <div class="section">
+          <div class="section-header"><span class="section-label">Video</span></div>
+          <div id="video-list"></div>
+        </div>
+        <div class="section">
+          <div class="section-header"><span class="section-label">Longform</span></div>
+          <div id="longform-list"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<div id="page-portfolio" class="page">
+  <div class="container">
+    <div style="padding:3rem 0;">
+      <div class="section-header" style="margin-bottom:1rem;"><span class="section-label">All work</span></div>
+      <ul class="article-list" id="all-list"></ul>
+    </div>
+  </div>
+</div>
+
+<div id="page-contact" class="page">
+  <div class="contact-wrap">
+    <div class="section-header" style="margin-bottom:1rem;"><span class="section-label">Contact</span></div>
+    <p class="contact-bio">For story tips, press enquiries or speaking engagements.</p>
+    <a href="https://x.com/mauipippa" target="_blank" class="contact-item"><span>↗ @mauipippa</span></a>
+    <a href="https://www.linkedin.com/in/marianna-giusti-466b91a9/" target="_blank" class="contact-item"><span>↗ LinkedIn</span></a>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-name">Marianna Giusti</span>
+  <div class="footer-right">
+    <ul class="footer-links">
+      <li><a href="https://x.com/mauipippa" target="_blank">X</a></li>
+      <li><a href="https://www.linkedin.com/in/marianna-giusti-466b91a9/" target="_blank">LinkedIn</a></li>
+    </ul>
+    <p class="ft-all">See all my recent FT stories <a href="https://www.ft.com/marianna-giusti" target="_blank">here →</a></p>
+  </div>
+</footer>
+
+<script>
+const SB_URL = 'https://uapkjifuwudofxxnntdm.supabase.co';
+const SB_KEY = 'sb_publishable_aGRROJn72rZJWamher3uIg_qdWwhq8a';
+const HEADERS = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY };
+const TAG_LABELS = { scoop:'Scoop', front:'Front page', magazine:'Magazine', exclusive:'Exclusive' };
+const TAG_CLS = { scoop:'tag-scoop', front:'tag-front', magazine:'tag-magazine', exclusive:'tag-exclusive' };
+
+async function get(table, params) {
+  const r = await fetch(`${SB_URL}/rest/v1/${table}?${params}`, { headers: HEADERS });
+  return r.json();
+}
+
+function articleHTML(a) {
+  return `<li class="article-item">
+    <div class="article-top">
+      <div style="flex:1;">
+        <span class="article-tag ${TAG_CLS[a.tag]||'tag-scoop'}">${TAG_LABELS[a.tag]||a.tag}</span><br>
+        <a class="article-title" href="${a.url||'#'}" target="_blank">${a.title}</a>
+        ${a.context?`<p class="article-context">${a.context}</p>`:''}
+      </div>
+      <span class="article-year">${a.year||''}</span>
+    </div>
+  </li>`;
+}
+
+async function load() {
+  const [articles, videos, longform] = await Promise.all([
+    get('articles','order=sort_order.asc,year.desc'),
+    get('videos','order=sort_order.asc'),
+    get('longform','order=sort_order.asc')
+  ]);
+
+  // bio — usa primo articolo come fallback o testo fisso
+  document.getElementById('bio-text').textContent = 'Staff journalist at the Financial Times in London, covering companies, global events and writing for the Magazine and Weekend desks. Previously at the BBC, The Times and Monocle.';
+
+  if (Array.isArray(articles) && articles.length) {
+    const pinned = articles.filter(a=>a.pinned);
+    const news = articles.filter(a=>!a.pinned);
+    document.getElementById('pinned-list').innerHTML = pinned.length ? pinned.map(articleHTML).join('') : '<li class="empty">Nessun articolo pinnato.</li>';
+    document.getElementById('newspaper-list').innerHTML = news.map(articleHTML).join('');
+    document.getElementById('all-list').innerHTML = articles.map(articleHTML).join('');
+  } else {
+    ['pinned-list','newspaper-list','all-list'].forEach(id => {
+      document.getElementById(id).innerHTML = '<li class="empty">Nessun contenuto ancora.</li>';
+    });
+  }
+
+  document.getElementById('video-list').innerHTML = Array.isArray(videos) && videos.length
+    ? videos.map(v=>`<a class="video-item" href="${v.url||'#'}" target="_blank"><div class="video-thumb">▶</div><span class="video-title">${v.title}</span><span style="color:var(--gray);">↗</span></a>`).join('')
+    : '<p class="empty">Nessun video ancora.</p>';
+
+  document.getElementById('longform-list').innerHTML = Array.isArray(longform) && longform.length
+    ? longform.map(p=>`<a class="pdf-item" href="${p.url||'#'}" target="_blank"><div class="pdf-icon">PDF</div><div style="flex:1;"><p class="pdf-title">${p.title}</p><p class="pdf-sub">${p.sub||''}</p></div><span style="color:var(--gray);">↗</span></a>`).join('')
+    : '<p class="empty">Nessun longform ancora.</p>';
+}
+
+function showPage(id,el) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+load();
+</script>
+</body>
+</html>
