@@ -174,14 +174,15 @@ function articleHTML(a) {
 }
 
 async function load() {
-  const [articles, videos, longform] = await Promise.all([
+  const [articles, videos, longform, settings] = await Promise.all([
     get('articles','order=sort_order.asc,year.desc'),
     get('videos','order=sort_order.asc'),
-    get('longform','order=sort_order.asc')
+    get('longform','order=sort_order.asc'),
+    get('settings','key=eq.bio&limit=1')
   ]);
 
-  // bio — usa primo articolo come fallback o testo fisso
-  document.getElementById('bio-text').textContent = 'Staff journalist at the Financial Times in London, covering companies, global events and writing for the Magazine and Weekend desks. Previously at the BBC, The Times and Monocle.';
+  const bio = Array.isArray(settings) && settings[0] ? settings[0].value : '';
+  document.getElementById('bio-text').textContent = bio;
 
   if (Array.isArray(articles) && articles.length) {
     const pinned = articles.filter(a=>a.pinned);
