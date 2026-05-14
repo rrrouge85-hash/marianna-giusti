@@ -24,7 +24,7 @@
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --black: #1a1a1a; --gray: #888; --light-gray: #f5f5f4; --border: #e5e5e3; --white: #ffffff; }
+  :root { --black: #1a1a1a; --gray: #888; --light-gray: #f5f5f4; --lighter-gray: #bbb; --border: #e5e5e3; --white: #ffffff; }
   html { scroll-behavior: smooth; }
   body { font-family: 'Outfit', sans-serif; color: var(--black); background: var(--white); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
   a { color: inherit; text-decoration: none; }
@@ -47,7 +47,7 @@
   .main-content { padding: 3rem 0 3rem 3rem; }
   .section { margin-bottom: 3rem; }
   .section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
-  .section-label { font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--gray); }
+  .section-label { font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--lighter-gray); }
   .article-list { list-style: none; }
   .article-item { padding: 1.1rem 0; border-bottom: 0.5px solid var(--border); }
   .article-item:first-child { border-top: 0.5px solid var(--border); }
@@ -59,7 +59,7 @@
   .tag-exclusive { background: #fce7f3; color: #9d174d; }
   .article-title { font-family: 'EB Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.2; color: var(--black); flex: 1; transition: opacity 0.15s; }
   .article-title:hover { opacity: 0.7; }
-  .article-year { font-size: 11px; color: var(--gray); white-space: nowrap; font-weight: 300; }
+  .item-date { font-size: 11px; color: var(--lighter-gray); font-weight: 300; margin-top: 6px; display: block; }
   .article-context { font-size: 15px; color: var(--gray); line-height: 1.65; font-weight: 300; margin-top: 4px; }
   .video-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; }
   .video-item:first-child { border-top: 0.5px solid var(--border); }
@@ -191,7 +191,7 @@
       <main class="main-content">
         <div class="section">
           <div class="section-header">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gray)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 00-1.11-1.79l-1.78-.9A2 2 0 0115 10.76V6h1a2 2 0 000-4H8a2 2 0 000 4h1v4.76a2 2 0 01-1.11 1.79l-1.78.9A2 2 0 005 15.24V17z"/></svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--lighter-gray)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 00-1.11-1.79l-1.78-.9A2 2 0 0115 10.76V6h1a2 2 0 000-4H8a2 2 0 000 4h1v4.76a2 2 0 01-1.11 1.79l-1.78.9A2 2 0 005 15.24V17z"/></svg>
           </div>
           <ul class="article-list" id="pinned-list"></ul>
         </div>
@@ -306,8 +306,8 @@ function articleHTML(a) {
         <span class="article-tag ${TAG_CLS[a.tag]||'tag-scoop'}">${TAG_LABELS[a.tag]||a.tag}</span><br>
         <a class="article-title" href="${a.url||'#'}" target="_blank">${a.title}</a>
         ${a.context?`<p class="article-context">${a.context}</p>`:''}
+        ${formatDate(a.date)?`<span class="item-date">${formatDate(a.date)}</span>`:''}
       </div>
-      <span class="article-year">${formatDate(a.date)||''}</span>
     </div>
   </li>`;
 }
@@ -370,8 +370,8 @@ async function load() {
 
   const pinnedHTML = [
     ...pinnedArts.map(articleHTML),
-    ...pinnedVids.map(v=>`<li class="article-item"><a class="article-title" href="${v.url||'#'}" target="_blank">▶ ${v.title}</a></li>`),
-    ...pinnedLfs.map(p=>`<li class="article-item"><a class="article-title" href="${p.url||'#'}" target="_blank">PDF — ${p.title}</a><p class="article-context">${p.sub||''}</p></li>`)
+    ...pinnedVids.map(v=>`<li class="article-item"><a class="article-title" href="${v.url||'#'}" target="_blank">▶ ${v.title}</a>${v.context?`<p class="article-context">${v.context}</p>`:''}${formatDate(v.date)?`<span class="item-date">${formatDate(v.date)}</span>`:''}</li>`),
+    ...pinnedLfs.map(p=>`<li class="article-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')"><a class="article-title">PDF — ${p.title}</a>${p.context?`<p class="article-context">${p.context}</p>`:p.sub?`<p class="article-context">${p.sub}</p>`:''}${formatDate(p.date)?`<span class="item-date">${formatDate(p.date)}</span>`:''}</li>`)
   ].join('');
 
   document.getElementById('pinned-list').innerHTML = pinnedHTML || '<li class="empty">Nessun contenuto pinnato.</li>';
@@ -382,44 +382,30 @@ async function load() {
   // ALL PORTFOLIO
   document.getElementById('all-list').innerHTML = arts.map(articleHTML).join('') || '<li class="empty">Nessun articolo ancora.</li>';
 
-  document.getElementById('all-video-list').innerHTML = vids.map(v => {
+  const DATE_STYLE = `font-family:'Outfit',sans-serif;font-size:11px;color:var(--lighter-gray);margin-top:6px;display:block;`;
+
+  function videoHTML(v) {
     const embedId = extractId(v.url, v.type);
     const dateStr = formatDate(v.date) || '';
-    if ((v.type === 'youtube' || v.type === 'vimeo') && embedId) {
-      return `<div class="video-embed"><p class="video-embed-title">${v.title}</p>${dateStr?`<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-bottom:8px;">${dateStr}</p>`:''}<iframe src="${v.type==='youtube'?'https://www.youtube.com/embed/':'https://player.vimeo.com/video/'}${embedId}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:4px;display:block;"></iframe></div>`;
-    }
-    return `<a class="video-item" href="${v.url||'#'}" target="_blank"><div class="video-thumb">▶</div><div style="flex:1;"><span class="video-title">${v.title}</span>${dateStr?`<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-top:3px;">${dateStr}</p>`:''}</div><span style="color:var(--gray);">↗</span></a>`;
-  }).join('') || '<p class="empty">Nessun video ancora.</p>';
-
-  document.getElementById('all-longform-list').innerHTML = lfs.map(p=>
-    `<div class="pdf-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')">
-      <div class="pdf-icon">PDF</div>
-      <div style="flex:1;"><p class="pdf-title">${p.title}</p>${p.sub?`<p class="pdf-sub">${p.sub}</p>`:''}${formatDate(p.date)?`<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-top:3px;">${formatDate(p.date)}</p>`:''}</div>
-      <span style="color:var(--gray);font-size:12px;">↗</span>
-    </div>`
-  ).join('') || '<p class="empty">Nessun longform ancora.</p>';
-
-  // VIDEO
-  const videoHTML = vids.filter(v=>!v.pinned).map(v => {
-    const embedId = extractId(v.url, v.type);
-    const dateStr = formatDate(v.date) || '';
+    const ctx = v.context ? `<p class="article-context">${v.context}</p>` : '';
+    const date = dateStr ? `<span style="${DATE_STYLE}">${dateStr}</span>` : '';
     if (v.type === 'youtube' && embedId) {
       return `<div class="video-embed">
         <p class="video-embed-title">${v.title}</p>
-        ${dateStr ? `<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-bottom:8px;">${dateStr}</p>` : ''}
-        <iframe src="https://www.youtube.com/embed/${embedId}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:4px;display:block;"></iframe>
+        ${ctx}${date}
+        <iframe src="https://www.youtube.com/embed/${embedId}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:4px;display:block;margin-top:10px;"></iframe>
       </div>`;
     } else if (v.type === 'vimeo' && embedId) {
       return `<div class="video-embed">
         <p class="video-embed-title">${v.title}</p>
-        ${dateStr ? `<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-bottom:8px;">${dateStr}</p>` : ''}
-        <iframe src="https://player.vimeo.com/video/${embedId}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:4px;display:block;"></iframe>
+        ${ctx}${date}
+        <iframe src="https://player.vimeo.com/video/${embedId}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:4px;display:block;margin-top:10px;"></iframe>
       </div>`;
     } else if (v.type === 'tiktok' && embedId) {
       return `<div class="video-embed">
         <p class="video-embed-title">${v.title}</p>
-        ${dateStr ? `<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-bottom:8px;">${dateStr}</p>` : ''}
-        <blockquote class="tiktok-embed" cite="${v.url}" data-video-id="${embedId}" style="max-width:100%;margin:8px 0 0;"><section></section></blockquote>
+        ${ctx}${date}
+        <blockquote class="tiktok-embed" cite="${v.url}" data-video-id="${embedId}" style="max-width:100%;margin:10px 0 0;"><section></section></blockquote>
         <script async src="https://www.tiktok.com/embed.js"><\/script>
       </div>`;
     } else {
@@ -427,27 +413,34 @@ async function load() {
         <div class="video-thumb">▶</div>
         <div style="flex:1;">
           <span class="video-title">${v.title}</span>
-          ${dateStr ? `<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-top:3px;">${dateStr}</p>` : ''}
+          ${ctx}${date}
         </div>
         <span style="color:var(--gray);">↗</span>
       </a>`;
     }
-  }).join('');
+  }
 
-  document.getElementById('video-list').innerHTML = videoHTML || '<p class="empty">Nessun video ancora.</p>';
-
-  // LONGFORM
-  document.getElementById('longform-list').innerHTML = lfs.filter(p=>!p.pinned).map(p=>
-    `<div class="pdf-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')">
+  function longformHTML(p) {
+    const ctx = p.context ? `<p class="pdf-sub">${p.context}</p>` : (p.sub ? `<p class="pdf-sub">${p.sub}</p>` : '');
+    const date = formatDate(p.date) ? `<span style="${DATE_STYLE}">${formatDate(p.date)}</span>` : '';
+    return `<div class="pdf-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')">
       <div class="pdf-icon">PDF</div>
       <div style="flex:1;">
         <p class="pdf-title">${p.title}</p>
-        ${p.sub ? `<p class="pdf-sub">${p.sub}</p>` : ''}
-        ${formatDate(p.date) ? `<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-top:3px;">${formatDate(p.date)}</p>` : ''}
+        ${ctx}${date}
       </div>
       <span style="color:var(--gray);font-size:12px;">↗</span>
-    </div>`
-  ).join('') || '<p class="empty">Nessun longform ancora.</p>';
+    </div>`;
+  }
+
+  document.getElementById('all-video-list').innerHTML = vids.map(videoHTML).join('') || '<p class="empty">Nessun video ancora.</p>';
+  document.getElementById('all-longform-list').innerHTML = lfs.map(longformHTML).join('') || '<p class="empty">Nessun longform ancora.</p>';
+
+  // VIDEO
+  document.getElementById('video-list').innerHTML = vids.filter(v=>!v.pinned).map(videoHTML).join('') || '<p class="empty">Nessun video ancora.</p>';
+
+  // LONGFORM
+  document.getElementById('longform-list').innerHTML = lfs.filter(p=>!p.pinned).map(longformHTML).join('') || '<p class="empty">Nessun longform ancora.</p>';
 }
 
 function showPage(id, el) {

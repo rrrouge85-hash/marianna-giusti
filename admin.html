@@ -165,6 +165,9 @@
           <option value="link">Link esterno (Instagram, FT...)</option>
         </select>
         <label>URL</label><input type="url" id="new-vid-url" placeholder="https://...">
+        <label>Contesto</label><textarea id="new-vid-context" rows="2" placeholder="Due righe descrittive..."></textarea>
+        <label>Contesto</label>
+        <textarea id="new-vid-context" rows="2" placeholder="Breve descrizione..."></textarea>
         <label>Data</label><input type="date" id="new-vid-date">
         <div style="display:flex;align-items:center;gap:6px;margin-top:10px;">
           <input type="checkbox" id="new-vid-pinned">
@@ -181,6 +184,9 @@
         <p class="add-form-title">Aggiungi longform</p>
         <label>Titolo</label><input type="text" id="new-lf-title" placeholder="Titolo del pezzo">
         <label>Pubblicazione</label><input type="text" id="new-lf-sub" placeholder="FT Weekend Magazine">
+        <label>Contesto</label><textarea id="new-lf-context" rows="2" placeholder="Due righe descrittive..."></textarea>
+        <label>Contesto</label>
+        <textarea id="new-lf-context" rows="2" placeholder="Breve descrizione..."></textarea>
         <div style="margin-top:12px;">
           <label style="margin-top:0;">Carica PDF</label>
           <input type="file" id="new-lf-file" accept=".pdf" style="font-size:12px;color:var(--gray);width:100%;padding:8px 0;">
@@ -348,11 +354,12 @@ async function addVideo() {
     title,
     type: document.getElementById('new-vid-type').value,
     url: document.getElementById('new-vid-url').value || '#',
+    context: document.getElementById('new-vid-context').value,
     date: document.getElementById('new-vid-date').value || null,
     pinned: document.getElementById('new-vid-pinned').checked,
     sort_order: 999
   });
-  ['new-vid-title','new-vid-url','new-vid-date'].forEach(id=>document.getElementById(id).value='');
+  ['new-vid-title','new-vid-url','new-vid-date','new-vid-context'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('new-vid-pinned').checked = false;
   await loadVideos(); toast('Video aggiunto ✓');
 }
@@ -365,6 +372,7 @@ async function saveVideo(id) {
   await sbPatch('videos',id,{
     title: document.getElementById('vt-'+id).value,
     url: document.getElementById('vu-'+id).value,
+    context: document.getElementById('vc-'+id).value,
     date: document.getElementById('vd-'+id).value || null,
     pinned: document.getElementById('vp-'+id).checked
   });
@@ -403,6 +411,7 @@ async function addLongform() {
   await sbPost('longform', {
     title,
     sub: document.getElementById('new-lf-sub').value,
+    context: document.getElementById('new-lf-context').value,
     url: url || '#',
     date: document.getElementById('new-lf-date').value || null,
     pinned: document.getElementById('new-lf-pinned').checked,
@@ -423,6 +432,7 @@ async function saveLongform(id) {
   await sbPatch('longform',id,{
     title: document.getElementById('lft-'+id).value,
     sub: document.getElementById('lfs-'+id).value,
+    context: document.getElementById('lfc-'+id).value,
     url: document.getElementById('lfu-'+id).value,
     date: document.getElementById('lfd-'+id).value || null,
     pinned: document.getElementById('lfp-'+id).checked
@@ -506,6 +516,8 @@ async function loadVideos() {
         <input type="text" id="vt-${x.id}" value="${(x.title||'').replace(/"/g,'&quot;')}">
         <label>URL</label>
         <input type="url" id="vu-${x.id}" value="${x.url||''}">
+        <label>Contesto</label>
+        <textarea id="vc-${x.id}" rows="2">${x.context||''}</textarea>
         <label>Data</label>
         <input type="date" id="vd-${x.id}">
         <div style="display:flex;align-items:center;gap:6px;margin-top:10px;">
@@ -548,6 +560,8 @@ async function loadLongform() {
         <input type="text" id="lft-${x.id}" value="${(x.title||'').replace(/"/g,'&quot;')}">
         <label>Pubblicazione</label>
         <input type="text" id="lfs-${x.id}" value="${(x.sub||'').replace(/"/g,'&quot;')}">
+        <label>Contesto</label>
+        <textarea id="lfc-${x.id}" rows="2">${x.context||''}</textarea>
         <label>URL PDF</label>
         <input type="url" id="lfu-${x.id}" value="${x.url||''}">
         <label>Data</label>
