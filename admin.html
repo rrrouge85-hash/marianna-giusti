@@ -137,6 +137,13 @@
       <div class="add-form">
         <p class="add-form-title">Aggiungi video</p>
         <label>Titolo</label><input type="text" id="new-vid-title" placeholder="Titolo del video">
+        <label>Tipo</label>
+        <select id="new-vid-type">
+          <option value="youtube">YouTube</option>
+          <option value="vimeo">Vimeo</option>
+          <option value="tiktok">TikTok</option>
+          <option value="link">Link esterno (Instagram, FT...)</option>
+        </select>
         <label>URL</label><input type="url" id="new-vid-url" placeholder="https://...">
         <div class="form-actions"><button class="btn btn-primary" onclick="addVideo()">Aggiungi</button></div>
       </div>
@@ -149,7 +156,14 @@
         <p class="add-form-title">Aggiungi longform</p>
         <label>Titolo</label><input type="text" id="new-lf-title" placeholder="Titolo del pezzo">
         <label>Pubblicazione</label><input type="text" id="new-lf-sub" placeholder="FT Weekend Magazine">
-        <label>URL PDF</label><input type="url" id="new-lf-url" placeholder="https://...">
+        <div style="margin-top:12px;">
+          <label style="margin-top:0;">Carica PDF</label>
+          <input type="file" id="new-lf-file" accept=".pdf" style="font-size:12px;color:var(--gray);width:100%;padding:8px 0;">
+          <p style="font-size:11px;color:var(--gray);margin-top:4px;">oppure</p>
+          <label>URL esterno</label>
+          <input type="url" id="new-lf-url" placeholder="https://...">
+        </div>
+        <div id="lf-upload-progress" style="display:none;font-size:12px;color:var(--gray);margin-top:8px;">Caricamento...</div>
         <div class="form-actions"><button class="btn btn-primary" onclick="addLongform()">Aggiungi</button></div>
       </div>
       <p class="section-title">Longform pubblicati</p>
@@ -262,8 +276,14 @@ async function saveArticle(id) {
 async function deleteArticle(id) { if(!confirm('Eliminare?'))return; await sbDelete('articles',id); await loadArticles(); toast('Eliminato'); }
 
 async function addVideo() {
-  const title=document.getElementById('new-vid-title').value.trim(); if(!title)return;
-  await sbPost('videos',{title,url:document.getElementById('new-vid-url').value||'#',sort_order:999});
+  const title = document.getElementById('new-vid-title').value.trim();
+  if (!title) return;
+  await sbPost('videos', {
+    title,
+    type: document.getElementById('new-vid-type').value,
+    url: document.getElementById('new-vid-url').value || '#',
+    sort_order: 999
+  });
   ['new-vid-title','new-vid-url'].forEach(id=>document.getElementById(id).value='');
   await loadVideos(); toast('Video aggiunto ✓');
 }
@@ -278,9 +298,43 @@ async function saveVideo(id) {
 }
 
 async function addLongform() {
-  const title=document.getElementById('new-lf-title').value.trim(); if(!title)return;
-  await sbPost('longform',{title,sub:document.getElementById('new-lf-sub').value,url:document.getElementById('new-lf-url').value||'#',sort_order:999});
+  const title = document.getElementById('new-lf-title').value.trim();
+  if (!title) return;
+
+  let url = document.getElementById('new-lf-url').value || '';
+  const file = document.getElementById('new-lf-file').files[0];
+
+  if (file) {
+    const progress = document.getElementById('lf-upload-progress');
+    progress.style.display = 'block';
+    progress.textContent = 'Caricamento PDF...';
+
+    const filename = `${Date.now()}-${file.name.replace(/\s+/g,'-')}`;
+    const uploadRes = await fetch(`${SB_URL}/storage/v1/object/marianna-giusti/pdfs/${filename}`, {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/pdf' },
+      body: file
+    });
+
+    if (uploadRes.ok) {
+      url = `${SB_URL}/storage/v1/object/public/marianna-giusti/pdfs/${filename}`;
+      progress.textContent = 'PDF caricato ✓';
+      setTimeout(() => { progress.style.display = 'none'; }, 2000);
+    } else {
+      progress.textContent = 'Errore nel caricamento. Prova con URL esterno.';
+      return;
+    }
+  }
+
+  await sbPost('longform', {
+    title,
+    sub: document.getElementById('new-lf-sub').value,
+    url: url || '#',
+    sort_order: 999
+  });
+
   ['new-lf-title','new-lf-sub','new-lf-url'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('new-lf-file').value = '';
   await loadLongform(); toast('Longform aggiunto ✓');
 }
 

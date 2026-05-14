@@ -48,7 +48,9 @@
   .video-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; }
   .video-item:first-child { border-top: 0.5px solid var(--border); }
   .video-item:hover { opacity: 0.7; }
-  .video-thumb { width: 60px; height: 44px; background: var(--light-gray); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gray); font-size: 18px; }
+  .video-embed { padding: 1rem 0; border-bottom: 0.5px solid var(--border); }
+  .video-embed:first-child { border-top: 0.5px solid var(--border); }
+  .video-embed-title { font-family: 'EB Garamond', serif; font-size: 14px; font-weight: 400; color: var(--black); margin-bottom: 6px; }
   .video-title { font-family: 'EB Garamond', serif; font-size: 14px; font-weight: 400; flex: 1; }
   .pdf-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; }
   .pdf-item:first-child { border-top: 0.5px solid var(--border); }
@@ -87,6 +89,7 @@
         <div class="hero-links">
           <a href="https://x.com/mauipippa" target="_blank">↗ X</a>
           <a href="https://www.linkedin.com/in/marianna-giusti-466b91a9/" target="_blank">↗ LinkedIn</a>
+          <a href="https://www.ft.com/marianna-giusti" target="_blank">↗ See all my recent FT stories here</a>
           <a href="mailto:giustimarianna7@gmail.com">↗ Email</a>
         </div>
       </aside>
@@ -164,6 +167,25 @@ function articleHTML(a) {
   </li>`;
 }
 
+function extractId(url, type) {
+  if (!url) return null;
+  try {
+    if (type === 'youtube') {
+      const m = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+      return m ? m[1] : null;
+    }
+    if (type === 'vimeo') {
+      const m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+      return m ? m[1] : null;
+    }
+    if (type === 'tiktok') {
+      const m = url.match(/video\/(\d+)/);
+      return m ? m[1] : null;
+    }
+  } catch(e) { return null; }
+  return null;
+}
+
 async function load() {
   const [articles, videos, longform, settings] = await Promise.all([
     get('articles','order=sort_order.asc,year.desc'),
@@ -199,9 +221,30 @@ async function load() {
   document.getElementById('all-list').innerHTML = arts.map(articleHTML).join('') || '<li class="empty">Nessun articolo ancora.</li>';
 
   // VIDEO
-  document.getElementById('video-list').innerHTML = vids.filter(v=>!v.pinned).map(v=>
-    `<a class="video-item" href="${v.url||'#'}" target="_blank"><div class="video-thumb">▶</div><span class="video-title">${v.title}</span><span style="color:var(--gray);">↗</span></a>`
-  ).join('') || '<p class="empty">Nessun video ancora.</p>';
+  const videoHTML = vids.filter(v=>!v.pinned).map(v => {
+    const embedId = extractId(v.url, v.type);
+    if (v.type === 'youtube' && embedId) {
+      return `<div class="video-embed">
+        <p class="video-embed-title">${v.title}</p>
+        <iframe src="https://www.youtube.com/embed/${embedId}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:4px;display:block;margin-top:8px;"></iframe>
+      </div>`;
+    } else if (v.type === 'vimeo' && embedId) {
+      return `<div class="video-embed">
+        <p class="video-embed-title">${v.title}</p>
+        <iframe src="https://player.vimeo.com/video/${embedId}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:4px;display:block;margin-top:8px;"></iframe>
+      </div>`;
+    } else if (v.type === 'tiktok' && embedId) {
+      return `<div class="video-embed">
+        <p class="video-embed-title">${v.title}</p>
+        <blockquote class="tiktok-embed" cite="${v.url}" data-video-id="${embedId}" style="max-width:100%;margin:8px 0 0;"><section></section></blockquote>
+        <script async src="https://www.tiktok.com/embed.js"><\/script>
+      </div>`;
+    } else {
+      return `<a class="video-item" href="${v.url||'#'}" target="_blank"><div class="video-thumb">▶</div><span class="video-title">${v.title}</span><span style="color:var(--gray);">↗</span></a>`;
+    }
+  }).join('');
+
+  document.getElementById('video-list').innerHTML = videoHTML || '<p class="empty">Nessun video ancora.</p>';
 
   // LONGFORM
   document.getElementById('longform-list').innerHTML = lfs.filter(p=>!p.pinned).map(p=>
