@@ -270,6 +270,8 @@ async function addVideo() {
 
 async function deleteVideo(id) { if(!confirm('Eliminare?'))return; await sbDelete('videos',id); await loadVideos(); toast('Eliminato'); }
 
+async function toggleVidPin(id,current) { await sbPatch('videos',id,{pinned:!current}); await loadVideos(); toast(!current?'Pinnato ✓':'Pin rimosso'); }
+
 async function saveVideo(id) {
   await sbPatch('videos',id,{ title:document.getElementById('vt-'+id).value, url:document.getElementById('vu-'+id).value });
   await loadVideos(); toast('Salvato ✓');
@@ -283,6 +285,8 @@ async function addLongform() {
 }
 
 async function deleteLongform(id) { if(!confirm('Eliminare?'))return; await sbDelete('longform',id); await loadLongform(); toast('Eliminato'); }
+
+async function toggleLfPin(id,current) { await sbPatch('longform',id,{pinned:!current}); await loadLongform(); toast(!current?'Pinnato ✓':'Pin rimosso'); }
 
 async function saveLongform(id) {
   await sbPatch('longform',id,{ title:document.getElementById('lft-'+id).value, sub:document.getElementById('lfs-'+id).value, url:document.getElementById('lfu-'+id).value });
@@ -347,6 +351,7 @@ async function loadVideos() {
       </div>
       <div class="item-actions">
         <button class="btn btn-ghost btn-sm" onclick="toggleEdit('vedit-${x.id}')">Modifica</button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleVidPin(${x.id},${x.pinned})">${x.pinned?'Unpin':'Pin'}</button>
         <button class="btn btn-danger btn-sm" onclick="deleteVideo(${x.id})">Elimina</button>
       </div>
       <div id="vedit-${x.id}" class="edit-form" style="display:none;">
@@ -372,6 +377,7 @@ async function loadLongform() {
       </div>
       <div class="item-actions">
         <button class="btn btn-ghost btn-sm" onclick="toggleEdit('lfedit-${x.id}')">Modifica</button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleLfPin(${x.id},${x.pinned})">${x.pinned?'Unpin':'Pin'}</button>
         <button class="btn btn-danger btn-sm" onclick="deleteLongform(${x.id})">Elimina</button>
       </div>
       <div id="lfedit-${x.id}" class="edit-form" style="display:none;">

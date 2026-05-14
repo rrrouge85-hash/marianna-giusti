@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Marianna Giusti</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root { --black: #1a1a1a; --gray: #888; --light-gray: #f5f5f4; --border: #e5e5e3; --white: #ffffff; }
   html { scroll-behavior: smooth; }
-  body { font-family: 'DM Sans', sans-serif; color: var(--black); background: var(--white); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  body { font-family: 'Outfit', sans-serif; color: var(--black); background: var(--white); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
   a { color: inherit; text-decoration: none; }
   .nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-bottom: 0.5px solid var(--border); padding: 0 2.5rem; height: 56px; display: flex; align-items: center; justify-content: space-between; }
-  .nav-name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 400; }
+  .nav-name { font-family: 'EB Garamond', serif; font-size: 16px; font-weight: 400; }
   .nav-links { display: flex; gap: 2rem; list-style: none; }
   .nav-links a { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--gray); transition: color 0.15s; cursor: pointer; }
   .nav-links a:hover, .nav-links a.active { color: var(--black); }
@@ -22,8 +22,8 @@
   .page.active { display: block; }
   .home-grid { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 56px); }
   .sidebar { border-right: 0.5px solid var(--border); padding: 3rem 2.5rem 3rem 0; position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; }
-  .hero-name { font-family: 'Playfair Display', serif; font-size: 46px; font-weight: 400; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
-  .hero-name em { font-style: italic; color: var(--gray); }
+  .hero-name { font-family: 'EB Garamond', serif; font-size: 46px; font-weight: 400; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
+  .hero-name em { font-style: normal; color: var(--black); }
   .hero-bio { font-size: 13px; line-height: 1.8; color: var(--gray); font-weight: 300; margin-bottom: 2rem; }
   .hero-links { display: flex; flex-direction: column; gap: .75rem; }
   .hero-links a { font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--gray); display: flex; align-items: center; gap: 6px; transition: color 0.15s; }
@@ -41,7 +41,7 @@
   .tag-front { background: #dcfce7; color: #166534; }
   .tag-magazine { background: #fef3c7; color: #92400e; }
   .tag-exclusive { background: #fce7f3; color: #9d174d; }
-  .article-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 400; line-height: 1.4; color: var(--black); flex: 1; transition: opacity 0.15s; }
+  .article-title { font-family: 'EB Garamond', serif; font-size: 15px; font-weight: 400; line-height: 1.4; color: var(--black); flex: 1; transition: opacity 0.15s; }
   .article-title:hover { opacity: 0.7; }
   .article-year { font-size: 11px; color: var(--gray); white-space: nowrap; font-weight: 300; }
   .article-context { font-size: 12px; color: var(--gray); line-height: 1.65; font-weight: 300; margin-top: 4px; }
@@ -49,16 +49,16 @@
   .video-item:first-child { border-top: 0.5px solid var(--border); }
   .video-item:hover { opacity: 0.7; }
   .video-thumb { width: 60px; height: 44px; background: var(--light-gray); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gray); font-size: 18px; }
-  .video-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 400; flex: 1; }
+  .video-title { font-family: 'EB Garamond', serif; font-size: 14px; font-weight: 400; flex: 1; }
   .pdf-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; }
   .pdf-item:first-child { border-top: 0.5px solid var(--border); }
   .pdf-item:hover { opacity: 0.7; }
   .pdf-icon { width: 40px; height: 40px; background: var(--light-gray); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 10px; font-weight: 500; color: var(--gray); letter-spacing: .04em; }
-  .pdf-title { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 400; flex: 1; }
+  .pdf-title { font-family: 'EB Garamond', serif; font-size: 14px; font-weight: 400; flex: 1; }
   .pdf-sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
   .empty { color: var(--gray); font-size: 12px; padding: 1rem 0; font-style: italic; }
   footer { border-top: 0.5px solid var(--border); padding: 1.5rem 2.5rem; display: flex; justify-content: space-between; align-items: center; }
-  .footer-name { font-family: 'Playfair Display', serif; font-size: 13px; color: var(--gray); }
+  .footer-name { font-family: 'EB Garamond', serif; font-size: 13px; color: var(--gray); }
   .footer-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
   .footer-links { display: flex; gap: 1.5rem; list-style: none; }
   .footer-links a { font-size: 11px; color: var(--gray); letter-spacing: .06em; text-transform: uppercase; transition: color 0.15s; }
@@ -76,14 +76,6 @@
 </head>
 <body>
 
-<nav class="nav">
-  <span class="nav-name">Marianna Giusti</span>
-  <ul class="nav-links">
-    <li><a class="active" onclick="showPage('home',this)">Home</a></li>
-    <li><a onclick="showPage('portfolio',this)">Portfolio</a></li>
-    <li><a onclick="showPage('contact',this)">Contact</a></li>
-  </ul>
-</nav>
 
 <div id="page-home" class="page active">
   <div class="container">
@@ -93,8 +85,9 @@
         <h1 class="hero-name">Marianna<br><em>Giusti</em></h1>
         <p class="hero-bio" id="bio-text"></p>
         <div class="hero-links">
-          <a href="https://x.com/mauipippa" target="_blank">↗ X / Twitter</a>
+          <a href="https://x.com/mauipippa" target="_blank">↗ X</a>
           <a href="https://www.linkedin.com/in/marianna-giusti-466b91a9/" target="_blank">↗ LinkedIn</a>
+          <a href="mailto:giustimarianna7@gmail.com">↗ Email</a>
         </div>
       </aside>
       <main class="main-content">
@@ -139,13 +132,11 @@
 
 <footer>
   <span class="footer-name">Marianna Giusti</span>
-  <div class="footer-right">
-    <ul class="footer-links">
-      <li><a href="https://x.com/mauipippa" target="_blank">X</a></li>
-      <li><a href="https://www.linkedin.com/in/marianna-giusti-466b91a9/" target="_blank">LinkedIn</a></li>
-    </ul>
-    <p class="ft-all">See all my recent FT stories <a href="https://www.ft.com/marianna-giusti" target="_blank">here →</a></p>
-  </div>
+  <ul class="footer-links">
+    <li><a href="https://x.com/mauipippa" target="_blank">X</a></li>
+    <li><a href="https://www.linkedin.com/in/marianna-giusti-466b91a9/" target="_blank">LinkedIn</a></li>
+    <li><a href="mailto:giustimarianna7@gmail.com">Email</a></li>
+  </ul>
 </footer>
 
 <script>
@@ -184,25 +175,38 @@ async function load() {
   const bio = Array.isArray(settings) && settings[0] ? settings[0].value : '';
   document.getElementById('bio-text').textContent = bio;
 
-  if (Array.isArray(articles) && articles.length) {
-    const pinned = articles.filter(a=>a.pinned);
-    const news = articles.filter(a=>!a.pinned);
-    document.getElementById('pinned-list').innerHTML = pinned.length ? pinned.map(articleHTML).join('') : '<li class="empty">Nessun articolo pinnato.</li>';
-    document.getElementById('newspaper-list').innerHTML = news.map(articleHTML).join('');
-    document.getElementById('all-list').innerHTML = articles.map(articleHTML).join('');
-  } else {
-    ['pinned-list','newspaper-list','all-list'].forEach(id => {
-      document.getElementById(id).innerHTML = '<li class="empty">Nessun contenuto ancora.</li>';
-    });
-  }
+  const arts = Array.isArray(articles) ? articles : [];
+  const vids = Array.isArray(videos) ? videos : [];
+  const lfs = Array.isArray(longform) ? longform : [];
 
-  document.getElementById('video-list').innerHTML = Array.isArray(videos) && videos.length
-    ? videos.map(v=>`<a class="video-item" href="${v.url||'#'}" target="_blank"><div class="video-thumb">▶</div><span class="video-title">${v.title}</span><span style="color:var(--gray);">↗</span></a>`).join('')
-    : '<p class="empty">Nessun video ancora.</p>';
+  // PINNED — tutti i tipi
+  const pinnedArts = arts.filter(a=>a.pinned);
+  const pinnedVids = vids.filter(v=>v.pinned);
+  const pinnedLfs = lfs.filter(p=>p.pinned);
 
-  document.getElementById('longform-list').innerHTML = Array.isArray(longform) && longform.length
-    ? longform.map(p=>`<a class="pdf-item" href="${p.url||'#'}" target="_blank"><div class="pdf-icon">PDF</div><div style="flex:1;"><p class="pdf-title">${p.title}</p><p class="pdf-sub">${p.sub||''}</p></div><span style="color:var(--gray);">↗</span></a>`).join('')
-    : '<p class="empty">Nessun longform ancora.</p>';
+  const pinnedHTML = [
+    ...pinnedArts.map(articleHTML),
+    ...pinnedVids.map(v=>`<li class="article-item"><a class="article-title" href="${v.url||'#'}" target="_blank">▶ ${v.title}</a></li>`),
+    ...pinnedLfs.map(p=>`<li class="article-item"><a class="article-title" href="${p.url||'#'}" target="_blank">PDF — ${p.title}</a><p class="article-context">${p.sub||''}</p></li>`)
+  ].join('');
+
+  document.getElementById('pinned-list').innerHTML = pinnedHTML || '<li class="empty">Nessun contenuto pinnato.</li>';
+
+  // NEWSPAPER
+  document.getElementById('newspaper-list').innerHTML = arts.filter(a=>!a.pinned).map(articleHTML).join('') || '<li class="empty">Nessun articolo ancora.</li>';
+
+  // ALL
+  document.getElementById('all-list').innerHTML = arts.map(articleHTML).join('') || '<li class="empty">Nessun articolo ancora.</li>';
+
+  // VIDEO
+  document.getElementById('video-list').innerHTML = vids.filter(v=>!v.pinned).map(v=>
+    `<a class="video-item" href="${v.url||'#'}" target="_blank"><div class="video-thumb">▶</div><span class="video-title">${v.title}</span><span style="color:var(--gray);">↗</span></a>`
+  ).join('') || '<p class="empty">Nessun video ancora.</p>';
+
+  // LONGFORM
+  document.getElementById('longform-list').innerHTML = lfs.filter(p=>!p.pinned).map(p=>
+    `<a class="pdf-item" href="${p.url||'#'}" target="_blank"><div class="pdf-icon">PDF</div><div style="flex:1;"><p class="pdf-title">${p.title}</p><p class="pdf-sub">${p.sub||''}</p></div><span style="color:var(--gray);">↗</span></a>`
+  ).join('') || '<p class="empty">Nessun longform ancora.</p>';
 }
 
 function showPage(id,el) {
