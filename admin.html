@@ -166,6 +166,10 @@
         </select>
         <label>URL</label><input type="url" id="new-vid-url" placeholder="https://...">
         <label>Data</label><input type="date" id="new-vid-date">
+        <div style="display:flex;align-items:center;gap:6px;margin-top:10px;">
+          <input type="checkbox" id="new-vid-pinned">
+          <label style="margin:0;cursor:pointer;font-size:12px;color:var(--gray);">Pinned</label>
+        </div>
         <div class="form-actions"><button class="btn btn-primary" onclick="addVideo()">Aggiungi</button></div>
       </div>
       <p class="section-title">Video pubblicati</p>
@@ -185,6 +189,10 @@
           <input type="url" id="new-lf-url" placeholder="https://...">
         </div>
         <label>Data</label><input type="date" id="new-lf-date">
+        <div style="display:flex;align-items:center;gap:6px;margin-top:10px;">
+          <input type="checkbox" id="new-lf-pinned">
+          <label style="margin:0;cursor:pointer;font-size:12px;color:var(--gray);">Pinned</label>
+        </div>
         <div id="lf-upload-progress" style="display:none;font-size:12px;color:var(--gray);margin-top:8px;">Caricamento...</div>
         <div class="form-actions"><button class="btn btn-primary" onclick="addLongform()">Aggiungi</button></div>
       </div>
@@ -341,9 +349,11 @@ async function addVideo() {
     type: document.getElementById('new-vid-type').value,
     url: document.getElementById('new-vid-url').value || '#',
     date: document.getElementById('new-vid-date').value || null,
+    pinned: document.getElementById('new-vid-pinned').checked,
     sort_order: 999
   });
   ['new-vid-title','new-vid-url','new-vid-date'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('new-vid-pinned').checked = false;
   await loadVideos(); toast('Video aggiunto ✓');
 }
 
@@ -352,7 +362,12 @@ async function deleteVideo(id) { if(!confirm('Eliminare?'))return; await sbDelet
 async function toggleVidPin(id,current) { await sbPatch('videos',id,{pinned:!current}); await loadVideos(); toast(!current?'Pinnato ✓':'Pin rimosso'); }
 
 async function saveVideo(id) {
-  await sbPatch('videos',id,{ title:document.getElementById('vt-'+id).value, url:document.getElementById('vu-'+id).value });
+  await sbPatch('videos',id,{
+    title: document.getElementById('vt-'+id).value,
+    url: document.getElementById('vu-'+id).value,
+    date: document.getElementById('vd-'+id).value || null,
+    pinned: document.getElementById('vp-'+id).checked
+  });
   await loadVideos(); toast('Salvato ✓');
 }
 
@@ -390,11 +405,13 @@ async function addLongform() {
     sub: document.getElementById('new-lf-sub').value,
     url: url || '#',
     date: document.getElementById('new-lf-date').value || null,
+    pinned: document.getElementById('new-lf-pinned').checked,
     sort_order: 999
   });
 
   ['new-lf-title','new-lf-sub','new-lf-url','new-lf-date'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('new-lf-file').value = '';
+  document.getElementById('new-lf-pinned').checked = false;
   await loadLongform(); toast('Longform aggiunto ✓');
 }
 
@@ -403,19 +420,25 @@ async function deleteLongform(id) { if(!confirm('Eliminare?'))return; await sbDe
 async function toggleLfPin(id,current) { await sbPatch('longform',id,{pinned:!current}); await loadLongform(); toast(!current?'Pinnato ✓':'Pin rimosso'); }
 
 async function saveLongform(id) {
-  await sbPatch('longform',id,{ title:document.getElementById('lft-'+id).value, sub:document.getElementById('lfs-'+id).value, url:document.getElementById('lfu-'+id).value });
+  await sbPatch('longform',id,{
+    title: document.getElementById('lft-'+id).value,
+    sub: document.getElementById('lfs-'+id).value,
+    url: document.getElementById('lfu-'+id).value,
+    date: document.getElementById('lfd-'+id).value || null,
+    pinned: document.getElementById('lfp-'+id).checked
+  });
   await loadLongform(); toast('Salvato ✓');
 }
 
 async function loadArticles() {
-  const a=await sbGet('articles','order=sort_order.asc,year.desc');
+  const a=await sbGet('articles','order=pinned.desc,date.desc');
   document.getElementById('admin-article-list').innerHTML=Array.isArray(a)&&a.length?a.map(x=>`
     <div class="admin-item">
       <div class="admin-item-info">
         <p class="admin-item-title">${x.title}</p>
         <div class="admin-item-meta">
           <span class="tag-pill tag-${x.tag}">${TAG_LABELS[x.tag]||x.tag}</span>
-          <span class="year-text">${x.year}</span>
+          <span class="year-text">${x.date||''}</span>
           ${x.pinned?'<span class="pin-badge">★ pinned</span>':''}
         </div>
       </div>
@@ -434,7 +457,7 @@ async function loadArticles() {
               <option value="exclusive" ${x.tag==='exclusive'?'selected':''}>Exclusive</option>
             </select>
           </div>
-          <div><label>Anno</label><input type="text" id="ey-${x.id}" value="${x.year||''}"></div>
+          <div><label>Data</label><input type="date" id="ey-${x.id}" value="${x.date||''}"></div>
           <div style="display:flex;align-items:flex-end;padding-bottom:2px;">
             <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin:0;">
               <input type="checkbox" id="ep-${x.id}" ${x.pinned?'checked':''}> Pinned
@@ -456,12 +479,15 @@ async function loadArticles() {
 }
 
 async function loadVideos() {
-  const v=await sbGet('videos','order=sort_order.asc');
+  const v=await sbGet('videos','order=date.desc');
   document.getElementById('admin-video-list').innerHTML=Array.isArray(v)&&v.length?v.map(x=>`
     <div class="admin-item">
       <div class="admin-item-info">
         <p class="admin-item-title">${x.title}</p>
-        <p style="font-size:11px;color:var(--gray);margin-top:2px;">${x.url}</p>
+        <div class="admin-item-meta">
+          <span class="year-text">${x.date||''}</span>
+          ${x.pinned?'<span class="pin-badge">★ pinned</span>':''}
+        </div>
       </div>
       <div class="item-actions">
         <button class="btn btn-ghost btn-sm" onclick="toggleEdit('vedit-${x.id}')">Modifica</button>
@@ -473,6 +499,12 @@ async function loadVideos() {
         <input type="text" id="vt-${x.id}" value="${(x.title||'').replace(/"/g,'&quot;')}">
         <label>URL</label>
         <input type="url" id="vu-${x.id}" value="${x.url||''}">
+        <label>Data</label>
+        <input type="date" id="vd-${x.id}" value="${x.date||''}">
+        <div style="display:flex;align-items:center;gap:6px;margin-top:10px;">
+          <input type="checkbox" id="vp-${x.id}" ${x.pinned?'checked':''}>
+          <label style="margin:0;cursor:pointer;">Pinned</label>
+        </div>
         <div class="form-actions" style="margin-top:.75rem;">
           <button class="btn btn-ghost btn-sm" onclick="toggleEdit('vedit-${x.id}')">Annulla</button>
           <button class="btn btn-primary btn-sm" onclick="saveVideo(${x.id})">Salva</button>
@@ -482,12 +514,15 @@ async function loadVideos() {
 }
 
 async function loadLongform() {
-  const l=await sbGet('longform','order=sort_order.asc');
+  const l=await sbGet('longform','order=date.desc');
   document.getElementById('admin-longform-list').innerHTML=Array.isArray(l)&&l.length?l.map(x=>`
     <div class="admin-item">
       <div class="admin-item-info">
         <p class="admin-item-title">${x.title}</p>
-        <p style="font-size:11px;color:var(--gray);margin-top:2px;">${x.sub||''}</p>
+        <div class="admin-item-meta">
+          <span class="year-text">${x.date||''}</span>
+          ${x.pinned?'<span class="pin-badge">★ pinned</span>':''}
+        </div>
       </div>
       <div class="item-actions">
         <button class="btn btn-ghost btn-sm" onclick="toggleEdit('lfedit-${x.id}')">Modifica</button>
@@ -501,6 +536,12 @@ async function loadLongform() {
         <input type="text" id="lfs-${x.id}" value="${(x.sub||'').replace(/"/g,'&quot;')}">
         <label>URL PDF</label>
         <input type="url" id="lfu-${x.id}" value="${x.url||''}">
+        <label>Data</label>
+        <input type="date" id="lfd-${x.id}" value="${x.date||''}">
+        <div style="display:flex;align-items:center;gap:6px;margin-top:10px;">
+          <input type="checkbox" id="lfp-${x.id}" ${x.pinned?'checked':''}>
+          <label style="margin:0;cursor:pointer;">Pinned</label>
+        </div>
         <div class="form-actions" style="margin-top:.75rem;">
           <button class="btn btn-ghost btn-sm" onclick="toggleEdit('lfedit-${x.id}')">Annulla</button>
           <button class="btn btn-primary btn-sm" onclick="saveLongform(${x.id})">Salva</button>
