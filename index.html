@@ -112,21 +112,22 @@
       padding: 2rem 0 2rem;
       position: static;
       height: auto;
-      display: grid;
-      grid-template-columns: 120px 1fr;
-      gap: 1.25rem;
-      align-items: start;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
     }
     .sidebar img {
-      width: 120px !important;
-      height: 120px !important;
+      width: 100% !important;
+      height: auto !important;
       aspect-ratio: 1/1 !important;
-      margin-bottom: 0 !important;
+      object-fit: cover;
+      object-position: center top;
+      margin-bottom: 1.25rem !important;
       border-radius: 4px;
     }
-    .sidebar-text { display: flex; flex-direction: column; justify-content: center; }
+    .sidebar-text { display: flex; flex-direction: column; }
     .hero-name { font-size: 30px; margin-bottom: .75rem; }
-    .hero-bio { font-size: 12px; margin-bottom: 1rem; }
+    .hero-bio { font-size: 15px; margin-bottom: 1rem; }
     .hero-links { flex-direction: row; flex-wrap: wrap; gap: .5rem; }
     .hero-links a { font-size: 10px; }
     .main-content { padding: 2rem 0 6rem; }
@@ -213,9 +214,19 @@
 
 <div id="page-portfolio" class="page">
   <div class="container">
-    <div style="padding:3rem 0;">
-      <div class="section-header" style="margin-bottom:1rem;"><span class="section-label">All work</span></div>
-      <ul class="article-list" id="all-list"></ul>
+    <div style="padding:3rem 0 6rem;">
+      <div class="section">
+        <div class="section-header"><span class="section-label">Newspaper</span></div>
+        <ul class="article-list" id="all-list"></ul>
+      </div>
+      <div class="section">
+        <div class="section-header"><span class="section-label">Video</span></div>
+        <div id="all-video-list"></div>
+      </div>
+      <div class="section">
+        <div class="section-header"><span class="section-label">Longform</span></div>
+        <div id="all-longform-list"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -226,6 +237,8 @@
     <p class="contact-bio">For story tips, press enquiries or speaking engagements.</p>
     <a href="https://x.com/mauipippa" target="_blank" class="contact-item"><span>↗ @mauipippa</span></a>
     <a href="https://www.linkedin.com/in/marianna-giusti-466b91a9/" target="_blank" class="contact-item"><span>↗ LinkedIn</span></a>
+    <a href="https://www.ft.com/marianna-giusti" target="_blank" class="contact-item"><span>↗ See all my recent FT stories</span></a>
+    <a href="mailto:giustimarianna7@gmail.com" class="contact-item"><span>↗ Email</span></a>
   </div>
 </div>
 
@@ -277,8 +290,9 @@ async function get(table, params) {
 
 function formatDate(d) {
   if (!d) return '';
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   const [y,m,day] = d.split('-');
-  return `${day}/${m}/${y}`;
+  return `${parseInt(day)} ${months[parseInt(m)-1]} ${y}`;
 }
 
 function articleHTML(a) {
@@ -361,8 +375,25 @@ async function load() {
   // NEWSPAPER
   document.getElementById('newspaper-list').innerHTML = arts.filter(a=>!a.pinned).map(articleHTML).join('') || '<li class="empty">Nessun articolo ancora.</li>';
 
-  // ALL
+  // ALL PORTFOLIO
   document.getElementById('all-list').innerHTML = arts.map(articleHTML).join('') || '<li class="empty">Nessun articolo ancora.</li>';
+
+  document.getElementById('all-video-list').innerHTML = vids.map(v => {
+    const embedId = extractId(v.url, v.type);
+    const dateStr = formatDate(v.date) || '';
+    if ((v.type === 'youtube' || v.type === 'vimeo') && embedId) {
+      return `<div class="video-embed"><p class="video-embed-title">${v.title}</p>${dateStr?`<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-bottom:8px;">${dateStr}</p>`:''}<iframe src="${v.type==='youtube'?'https://www.youtube.com/embed/':'https://player.vimeo.com/video/'}${embedId}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:4px;display:block;"></iframe></div>`;
+    }
+    return `<a class="video-item" href="${v.url||'#'}" target="_blank"><div class="video-thumb">▶</div><div style="flex:1;"><span class="video-title">${v.title}</span>${dateStr?`<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-top:3px;">${dateStr}</p>`:''}</div><span style="color:var(--gray);">↗</span></a>`;
+  }).join('') || '<p class="empty">Nessun video ancora.</p>';
+
+  document.getElementById('all-longform-list').innerHTML = lfs.map(p=>
+    `<div class="pdf-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')">
+      <div class="pdf-icon">PDF</div>
+      <div style="flex:1;"><p class="pdf-title">${p.title}</p>${p.sub?`<p class="pdf-sub">${p.sub}</p>`:''}${formatDate(p.date)?`<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-top:3px;">${formatDate(p.date)}</p>`:''}</div>
+      <span style="color:var(--gray);font-size:12px;">↗</span>
+    </div>`
+  ).join('') || '<p class="empty">Nessun longform ancora.</p>';
 
   // VIDEO
   const videoHTML = vids.filter(v=>!v.pinned).map(v => {
