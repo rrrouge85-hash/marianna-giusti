@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reset password — Marianna Giusti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --black: #1a1a1a; --gray: #888; --border: #e5e5e3; --bg: #f9f9f8; --white: #fff; --red: #991b1b; --red-bg: #fee2e2; --green: #166534; --green-bg: #dcfce7; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--black); font-size: 14px; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+  .box { background: var(--white); border: 0.5px solid var(--border); border-radius: 8px; padding: 2.5rem; width: 340px; }
+  .title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; margin-bottom: .5rem; }
+  .sub { font-size: 12px; color: var(--gray); margin-bottom: 2rem; }
+  label { font-size: 12px; color: var(--gray); display: block; margin-bottom: 4px; margin-top: 12px; }
+  label:first-of-type { margin-top: 0; }
+  input[type=password] { width: 100%; padding: 9px 12px; font-family: inherit; font-size: 13px; border: 0.5px solid var(--border); border-radius: 6px; background: var(--white); color: var(--black); outline: none; }
+  input:focus { border-color: #aaa; }
+  .btn { display: block; width: 100%; padding: 10px; font-family: inherit; font-size: 13px; font-weight: 500; background: var(--black); color: var(--white); border: none; border-radius: 6px; cursor: pointer; margin-top: 1.25rem; text-align: center; }
+  .btn:hover { opacity: .85; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .msg { font-size: 12px; padding: 10px 12px; border-radius: 6px; margin-bottom: 1rem; display: none; }
+  .msg-ok { background: var(--green-bg); color: var(--green); }
+  .msg-err { background: var(--red-bg); color: var(--red); }
+  .back { display: block; text-align: center; margin-top: 1rem; font-size: 12px; color: var(--gray); text-decoration: underline; text-underline-offset: 3px; }
+</style>
+</head>
+<body>
+<div class="box">
+  <h1 class="title">Nuova password</h1>
+  <p class="sub">mariannagiusti.com</p>
+  <p class="msg msg-ok" id="msg-ok">Password aggiornata. Puoi accedere al pannello admin.</p>
+  <p class="msg msg-err" id="msg-err">Errore. Il link potrebbe essere scaduto — richiedine uno nuovo.</p>
+  <div id="form-wrap">
+    <label>Nuova password</label>
+    <input type="password" id="pw1" placeholder="••••••••">
+    <label>Conferma password</label>
+    <input type="password" id="pw2" placeholder="••••••••" onkeydown="if(event.key==='Enter')doReset()">
+    <button class="btn" id="btn" onclick="doReset()">Salva nuova password</button>
+  </div>
+  <a class="back" href="admin.html">← Torna al login</a>
+</div>
+
+<script>
+const SB_URL = 'https://uapkjifuwudofxxnntdm.supabase.co';
+const SB_KEY = 'sb_publishable_aGRROJn72rZJWamher3uIg_qdWwhq8a';
+
+function getTokenFromHash() {
+  const hash = window.location.hash.substring(1);
+  const params = new URLSearchParams(hash);
+  return params.get('access_token');
+}
+
+async function doReset() {
+  const pw1 = document.getElementById('pw1').value;
+  const pw2 = document.getElementById('pw2').value;
+  const btn = document.getElementById('btn');
+
+  if (!pw1 || pw1.length < 6) {
+    showErr('La password deve essere di almeno 6 caratteri.'); return;
+  }
+  if (pw1 !== pw2) {
+    showErr('Le password non coincidono.'); return;
+  }
+
+  const token = getTokenFromHash();
+  if (!token) {
+    showErr('Link non valido o scaduto. Richiedine uno nuovo dall\'admin.'); return;
+  }
+
+  btn.textContent = '...'; btn.disabled = true;
+
+  const r = await fetch(`${SB_URL}/auth/v1/user`, {
+    method: 'PUT',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ password: pw1 })
+  });
+
+  btn.textContent = 'Salva nuova password'; btn.disabled = false;
+
+  if (r.ok) {
+    document.getElementById('form-wrap').style.display = 'none';
+    document.getElementById('msg-ok').style.display = 'block';
+  } else {
+    showErr('Errore. Il link potrebbe essere scaduto — richiedine uno nuovo.');
+  }
+}
+
+function showErr(msg) {
+  const el = document.getElementById('msg-err');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+</script>
+</body>
+</html>
