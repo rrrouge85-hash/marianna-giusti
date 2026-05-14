@@ -80,6 +80,26 @@
     <div style="margin-top:1rem;">
       <button class="btn btn-primary" style="width:100%;justify-content:center;" id="login-btn" onclick="doLogin()">Accedi</button>
     </div>
+    <p style="margin-top:1rem;text-align:center;">
+      <a href="#" onclick="showForgot()" style="font-size:12px;color:var(--gray);text-decoration:underline;text-underline-offset:3px;">Ho dimenticato la password</a>
+    </p>
+  </div>
+</div>
+
+<div class="login-wrap" id="forgot-screen" style="display:none;">
+  <div class="login-box">
+    <h1 class="login-title">Reset password</h1>
+    <p class="login-sub">Ti mandiamo un link via email.</p>
+    <p class="login-error" id="forgot-error">Email non trovata.</p>
+    <p id="forgot-ok" style="font-size:12px;color:#166534;background:#dcfce7;padding:10px 12px;border-radius:6px;margin-bottom:1rem;display:none;">Email inviata — controlla la tua casella.</p>
+    <label>Email</label>
+    <input type="text" id="reset-email" placeholder="email@esempio.com" onkeydown="if(event.key==='Enter')doReset()">
+    <div style="margin-top:1rem;">
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="reset-btn" onclick="doReset()">Invia link</button>
+    </div>
+    <p style="margin-top:1rem;text-align:center;">
+      <a href="#" onclick="showLogin()" style="font-size:12px;color:var(--gray);text-decoration:underline;text-underline-offset:3px;">← Torna al login</a>
+    </p>
   </div>
 </div>
 
@@ -205,6 +225,41 @@ async function sbPatch(t,id,b) { const r=await fetch(`${SB_URL}/rest/v1/${t}?id=
 async function sbDelete(t,id) { await fetch(`${SB_URL}/rest/v1/${t}?id=eq.${id}`,{method:'DELETE',headers:H()}); }
 
 function toast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+
+function showForgot() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('forgot-screen').style.display = 'flex';
+  document.getElementById('forgot-error').style.display = 'none';
+  document.getElementById('forgot-ok').style.display = 'none';
+}
+
+function showLogin() {
+  document.getElementById('forgot-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+async function doReset() {
+  const email = document.getElementById('reset-email').value.trim();
+  if (!email) return;
+  const btn = document.getElementById('reset-btn');
+  btn.textContent = '...'; btn.disabled = true;
+
+  const r = await fetch(`${SB_URL}/auth/v1/recover`, {
+    method: 'POST',
+    headers: { 'apikey': SB_KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email })
+  });
+
+  btn.textContent = 'Invia link'; btn.disabled = false;
+
+  if (r.ok) {
+    document.getElementById('forgot-ok').style.display = 'block';
+    document.getElementById('forgot-error').style.display = 'none';
+  } else {
+    document.getElementById('forgot-error').style.display = 'block';
+    document.getElementById('forgot-ok').style.display = 'none';
+  }
+}
 
 async function doLogin() {
   const email = document.getElementById('email').value.trim();
