@@ -52,13 +52,22 @@
   .video-embed:first-child { border-top: 0.5px solid var(--border); }
   .video-embed-title { font-family: 'EB Garamond', serif; font-size: 14px; font-weight: 400; color: var(--black); margin-bottom: 6px; }
   .video-title { font-family: 'EB Garamond', serif; font-size: 14px; font-weight: 400; flex: 1; }
-  .pdf-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; }
+  .pdf-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; cursor: pointer; }
   .pdf-item:first-child { border-top: 0.5px solid var(--border); }
   .pdf-item:hover { opacity: 0.7; }
   .pdf-icon { width: 40px; height: 40px; background: var(--light-gray); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 10px; font-weight: 500; color: var(--gray); letter-spacing: .04em; }
   .pdf-title { font-family: 'EB Garamond', serif; font-size: 14px; font-weight: 400; flex: 1; }
   .pdf-sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
   .empty { color: var(--gray); font-size: 12px; padding: 1rem 0; font-style: italic; }
+
+  .pdf-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
+  .pdf-overlay.open { display: flex; }
+  .pdf-modal { background: var(--white); border-radius: 6px; width: 90vw; height: 90vh; display: flex; flex-direction: column; overflow: hidden; }
+  .pdf-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
+  .pdf-modal-title { font-family: 'EB Garamond', serif; font-size: 16px; font-weight: 400; }
+  .pdf-modal-close { font-size: 22px; color: var(--gray); cursor: pointer; line-height: 1; background: none; border: none; padding: 0 4px; }
+  .pdf-modal-close:hover { color: var(--black); }
+  .pdf-modal iframe { flex: 1; width: 100%; border: none; }
   footer { border-top: 0.5px solid var(--border); padding: 1.5rem 2.5rem; display: flex; justify-content: space-between; align-items: center; }
   .footer-name { font-family: 'EB Garamond', serif; font-size: 13px; color: var(--gray); }
   .footer-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
@@ -133,6 +142,16 @@
   </div>
 </div>
 
+<div class="pdf-overlay" id="pdf-overlay" onclick="closePDF(event)">
+  <div class="pdf-modal">
+    <div class="pdf-modal-header">
+      <span class="pdf-modal-title" id="pdf-modal-title"></span>
+      <button class="pdf-modal-close" onclick="closePDFBtn()">×</button>
+    </div>
+    <iframe id="pdf-iframe" src=""></iframe>
+  </div>
+</div>
+
 <footer>
   <span class="footer-name">Marianna Giusti</span>
   <ul class="footer-links">
@@ -165,6 +184,23 @@ function articleHTML(a) {
       <span class="article-year">${a.year||''}</span>
     </div>
   </li>`;
+}
+
+function openPDF(url, title) {
+  document.getElementById('pdf-iframe').src = url;
+  document.getElementById('pdf-modal-title').textContent = title;
+  document.getElementById('pdf-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePDFBtn() {
+  document.getElementById('pdf-overlay').classList.remove('open');
+  document.getElementById('pdf-iframe').src = '';
+  document.body.style.overflow = '';
+}
+
+function closePDF(e) {
+  if (e.target === document.getElementById('pdf-overlay')) closePDFBtn();
 }
 
 function extractId(url, type) {
@@ -248,7 +284,11 @@ async function load() {
 
   // LONGFORM
   document.getElementById('longform-list').innerHTML = lfs.filter(p=>!p.pinned).map(p=>
-    `<a class="pdf-item" href="${p.url||'#'}" target="_blank"><div class="pdf-icon">PDF</div><div style="flex:1;"><p class="pdf-title">${p.title}</p><p class="pdf-sub">${p.sub||''}</p></div><span style="color:var(--gray);">↗</span></a>`
+    `<div class="pdf-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')">
+      <div class="pdf-icon">PDF</div>
+      <div style="flex:1;"><p class="pdf-title">${p.title}</p><p class="pdf-sub">${p.sub||''}</p></div>
+      <span style="color:var(--gray);font-size:12px;">↗</span>
+    </div>`
   ).join('') || '<p class="empty">Nessun longform ancora.</p>';
 }
 
