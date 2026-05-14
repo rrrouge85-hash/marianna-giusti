@@ -457,7 +457,7 @@ async function loadArticles() {
               <option value="exclusive" ${x.tag==='exclusive'?'selected':''}>Exclusive</option>
             </select>
           </div>
-          <div><label>Data</label><input type="date" id="ey-${x.id}" value="${x.date||''}"></div>
+          <div><label>Data</label><input type="date" id="ey-${x.id}"></div>
           <div style="display:flex;align-items:flex-end;padding-bottom:2px;">
             <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin:0;">
               <input type="checkbox" id="ep-${x.id}" ${x.pinned?'checked':''}> Pinned
@@ -476,6 +476,13 @@ async function loadArticles() {
         </div>
       </div>
     </div>`).join(''):'<p class="spinner">Nessun articolo ancora.</p>';
+
+  if (Array.isArray(a)) {
+    a.forEach(x => {
+      const el = document.getElementById('ey-'+x.id);
+      if (el && x.date) el.value = x.date;
+    });
+  }
 }
 
 async function loadVideos() {
@@ -500,7 +507,7 @@ async function loadVideos() {
         <label>URL</label>
         <input type="url" id="vu-${x.id}" value="${x.url||''}">
         <label>Data</label>
-        <input type="date" id="vd-${x.id}" value="${x.date||''}">
+        <input type="date" id="vd-${x.id}">
         <div style="display:flex;align-items:center;gap:6px;margin-top:10px;">
           <input type="checkbox" id="vp-${x.id}" ${x.pinned?'checked':''}>
           <label style="margin:0;cursor:pointer;">Pinned</label>
@@ -511,6 +518,13 @@ async function loadVideos() {
         </div>
       </div>
     </div>`).join(''):'<p class="spinner">Nessun video ancora.</p>';
+
+  if (Array.isArray(v)) {
+    v.forEach(x => {
+      const el = document.getElementById('vd-'+x.id);
+      if (el && x.date) el.value = x.date;
+    });
+  }
 }
 
 async function loadLongform() {
@@ -537,7 +551,7 @@ async function loadLongform() {
         <label>URL PDF</label>
         <input type="url" id="lfu-${x.id}" value="${x.url||''}">
         <label>Data</label>
-        <input type="date" id="lfd-${x.id}" value="${x.date||''}">
+        <input type="date" id="lfd-${x.id}">
         <div style="display:flex;align-items:center;gap:6px;margin-top:10px;">
           <input type="checkbox" id="lfp-${x.id}" ${x.pinned?'checked':''}>
           <label style="margin:0;cursor:pointer;">Pinned</label>
@@ -548,6 +562,13 @@ async function loadLongform() {
         </div>
       </div>
     </div>`).join(''):'<p class="spinner">Nessun longform ancora.</p>';
+
+  if (Array.isArray(l)) {
+    l.forEach(x => {
+      const el = document.getElementById('lfd-'+x.id);
+      if (el && x.date) el.value = x.date;
+    });
+  }
 }
 
 async function loadAll() { await Promise.all([loadArticles(),loadVideos(),loadLongform(),loadBio()]); }
