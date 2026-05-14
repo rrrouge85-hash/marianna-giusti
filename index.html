@@ -74,7 +74,8 @@
   .pdf-icon { width: 40px; height: 40px; background: var(--light-gray); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 10px; font-weight: 500; color: var(--gray); letter-spacing: .04em; margin-top: 4px; }
   .pdf-title { font-family: 'EB Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.2; flex: 1; }
   .pdf-sub { font-size: 15px; color: var(--gray); margin-top: 4px; font-weight: 300; line-height: 1.65; }
-  .empty { color: var(--gray); font-size: 12px; padding: 1rem 0; font-style: italic; }
+  .ig-embed-wrap { margin-top: 10px; max-width: 540px; }
+  .ig-embed-wrap blockquote { margin: 0 !important; }
 
   .pdf-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
   .pdf-overlay.open { display: flex; }
@@ -388,8 +389,16 @@ async function load() {
     const embedId = extractId(v.url, v.type);
     const dateStr = formatDate(v.date) || '';
     const ctx = v.context ? `<p class="article-context">${v.context}</p>` : '';
-    const date = dateStr ? `<span style="${DATE_STYLE}">${dateStr}</span>` : '';
-    if (v.type === 'youtube' && embedId) {
+    const date = dateStr ? `<span class="item-date">${dateStr}</span>` : '';
+
+    if (v.type === 'instagram' && v.embed_code) {
+      return `<div class="video-embed">
+        <p class="video-embed-title">${v.title}</p>
+        ${ctx}${date}
+        <div class="ig-embed-wrap">${v.embed_code}</div>
+        <script async src="//www.instagram.com/embed.js"><\/script>
+      </div>`;
+    } else if (v.type === 'youtube' && embedId) {
       return `<div class="video-embed">
         <p class="video-embed-title">${v.title}</p>
         ${ctx}${date}

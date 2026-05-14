@@ -158,13 +158,20 @@
         <p class="add-form-title">Aggiungi video</p>
         <label>Titolo</label><input type="text" id="new-vid-title" placeholder="Titolo del video">
         <label>Tipo</label>
-        <select id="new-vid-type">
+        <select id="new-vid-type" onchange="toggleEmbedField()">
           <option value="youtube">YouTube</option>
           <option value="vimeo">Vimeo</option>
           <option value="tiktok">TikTok</option>
-          <option value="link">Link esterno (Instagram, FT...)</option>
+          <option value="instagram">Instagram</option>
+          <option value="link">Link esterno (FT...)</option>
         </select>
-        <label>URL</label><input type="url" id="new-vid-url" placeholder="https://...">
+        <div id="embed-field" style="display:none;">
+          <label>Codice embed Instagram</label>
+          <textarea id="new-vid-embed" rows="3" placeholder="Incolla qui il codice embed da Instagram (tre puntini → Incorpora)"></textarea>
+        </div>
+        <div id="url-field">
+          <label>URL</label><input type="url" id="new-vid-url" placeholder="https://...">
+        </div>
         <label>Contesto</label><textarea id="new-vid-context" rows="2" placeholder="Due righe descrittive..."></textarea>
         <label>Data</label><input type="date" id="new-vid-date">
         <div style="display:flex;align-items:center;gap:6px;margin-top:10px;">
@@ -343,19 +350,28 @@ async function saveArticle(id) {
 
 async function deleteArticle(id) { if(!confirm('Eliminare?'))return; await sbDelete('articles',id); await loadArticles(); toast('Eliminato'); }
 
+function toggleEmbedField() {
+  const type = document.getElementById('new-vid-type').value;
+  document.getElementById('embed-field').style.display = type === 'instagram' ? 'block' : 'none';
+  document.getElementById('url-field').style.display = type === 'instagram' ? 'none' : 'block';
+}
+
 async function addVideo() {
   const title = document.getElementById('new-vid-title').value.trim();
   if (!title) return;
+  const type = document.getElementById('new-vid-type').value;
+  const isIG = type === 'instagram';
   await sbPost('videos', {
     title,
-    type: document.getElementById('new-vid-type').value,
-    url: document.getElementById('new-vid-url').value || '#',
-    context: document.getElementById('new-vid-context').value,
+    type,
+    url: isIG ? '' : (document.getElementById('new-vid-url').value || '#'),
+    embed_code: isIG ? document.getElementById('new-vid-embed').value : null,
+    context: document.getElementById('new-vid-context').value || null,
     date: document.getElementById('new-vid-date').value || null,
     pinned: document.getElementById('new-vid-pinned').checked,
     sort_order: 999
   });
-  ['new-vid-title','new-vid-url','new-vid-date','new-vid-context'].forEach(id=>document.getElementById(id).value='');
+  ['new-vid-title','new-vid-url','new-vid-date','new-vid-context','new-vid-embed'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
   document.getElementById('new-vid-pinned').checked = false;
   await loadVideos(); toast('Video aggiunto ✓');
 }
@@ -368,7 +384,8 @@ async function saveVideo(id) {
   await sbPatch('videos',id,{
     title: document.getElementById('vt-'+id).value,
     url: document.getElementById('vu-'+id).value,
-    context: document.getElementById('vc-'+id).value,
+    embed_code: document.getElementById('ve-'+id).value || null,
+    context: document.getElementById('vc-'+id).value || null,
     date: document.getElementById('vd-'+id).value || null,
     pinned: document.getElementById('vp-'+id).checked
   });
@@ -512,6 +529,8 @@ async function loadVideos() {
         <input type="text" id="vt-${x.id}" value="${(x.title||'').replace(/"/g,'&quot;')}">
         <label>URL</label>
         <input type="url" id="vu-${x.id}" value="${x.url||''}">
+        <label>Embed code (Instagram)</label>
+        <textarea id="ve-${x.id}" rows="2">${x.embed_code||''}</textarea>
         <label>Contesto</label>
         <textarea id="vc-${x.id}" rows="2">${x.context||''}</textarea>
         <label>Data</label>
