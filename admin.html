@@ -330,7 +330,7 @@ function toggleEdit(elId) { const el=document.getElementById(elId); el.style.dis
 async function saveArticle(id) {
   await sbPatch('articles',id,{
     tag: document.getElementById('et-'+id).value,
-    year: document.getElementById('ey-'+id).value,
+    date: document.getElementById('ey-'+id).value || null,
     pinned: document.getElementById('ep-'+id).checked,
     title: document.getElementById('eti-'+id).value,
     url: document.getElementById('eu-'+id).value,

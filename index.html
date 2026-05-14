@@ -291,8 +291,12 @@ async function get(table, params) {
 function formatDate(d) {
   if (!d) return '';
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  const [y,m,day] = d.split('-');
-  return `${parseInt(day)} ${months[parseInt(m)-1]} ${y}`;
+  const parts = d.split('-');
+  if (parts.length === 3) {
+    const [y,m,day] = parts;
+    return `${parseInt(day)} ${months[parseInt(m)-1]} ${y}`;
+  }
+  return d;
 }
 
 function articleHTML(a) {
@@ -303,7 +307,7 @@ function articleHTML(a) {
         <a class="article-title" href="${a.url||'#'}" target="_blank">${a.title}</a>
         ${a.context?`<p class="article-context">${a.context}</p>`:''}
       </div>
-      <span class="article-year">${formatDate(a.date)||a.year||''}</span>
+      <span class="article-year">${formatDate(a.date)||''}</span>
     </div>
   </li>`;
 }
