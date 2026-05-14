@@ -40,14 +40,14 @@
   .sidebar { border-right: 0.5px solid var(--border); padding: 3rem 2.5rem 3rem 0; position: sticky; top: 56px; height: calc(100vh - 56px); overflow-y: auto; }
   .hero-name { font-family: 'EB Garamond', serif; font-size: 46px; font-weight: 400; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 1.5rem; }
   .hero-name em { font-style: normal; color: var(--black); }
-  .hero-bio { font-size: 13px; line-height: 1.8; color: var(--gray); font-weight: 300; margin-bottom: 2rem; }
+  .hero-bio { font-size: 15px; line-height: 1.8; color: var(--gray); font-weight: 300; margin-bottom: 2rem; }
   .hero-links { display: flex; flex-direction: column; gap: .75rem; }
   .hero-links a { font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--gray); display: flex; align-items: center; gap: 6px; transition: color 0.15s; }
   .hero-links a:hover { color: var(--black); }
   .main-content { padding: 3rem 0 3rem 3rem; }
   .section { margin-bottom: 3rem; }
   .section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
-  .section-label { font-size: 10px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--gray); }
+  .section-label { font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--gray); }
   .article-list { list-style: none; }
   .article-item { padding: 1.1rem 0; border-bottom: 0.5px solid var(--border); }
   .article-item:first-child { border-top: 0.5px solid var(--border); }
@@ -57,23 +57,23 @@
   .tag-front { background: #dcfce7; color: #166534; }
   .tag-magazine { background: #fef3c7; color: #92400e; }
   .tag-exclusive { background: #fce7f3; color: #9d174d; }
-  .article-title { font-family: 'EB Garamond', serif; font-size: 15px; font-weight: 400; line-height: 1.4; color: var(--black); flex: 1; transition: opacity 0.15s; }
+  .article-title { font-family: 'EB Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.2; color: var(--black); flex: 1; transition: opacity 0.15s; }
   .article-title:hover { opacity: 0.7; }
   .article-year { font-size: 11px; color: var(--gray); white-space: nowrap; font-weight: 300; }
-  .article-context { font-size: 12px; color: var(--gray); line-height: 1.65; font-weight: 300; margin-top: 4px; }
+  .article-context { font-size: 15px; color: var(--gray); line-height: 1.65; font-weight: 300; margin-top: 4px; }
   .video-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; }
   .video-item:first-child { border-top: 0.5px solid var(--border); }
   .video-item:hover { opacity: 0.7; }
   .video-embed { padding: 1rem 0; border-bottom: 0.5px solid var(--border); }
   .video-embed:first-child { border-top: 0.5px solid var(--border); }
-  .video-embed-title { font-family: 'EB Garamond', serif; font-size: 14px; font-weight: 400; color: var(--black); margin-bottom: 6px; }
-  .video-title { font-family: 'EB Garamond', serif; font-size: 14px; font-weight: 400; flex: 1; }
-  .pdf-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; cursor: pointer; }
+  .video-embed-title { font-family: 'EB Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.2; color: var(--black); margin-bottom: 8px; }
+  .video-title { font-family: 'EB Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.2; flex: 1; }
+  .pdf-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; cursor: pointer; }
   .pdf-item:first-child { border-top: 0.5px solid var(--border); }
   .pdf-item:hover { opacity: 0.7; }
-  .pdf-icon { width: 40px; height: 40px; background: var(--light-gray); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 10px; font-weight: 500; color: var(--gray); letter-spacing: .04em; }
-  .pdf-title { font-family: 'EB Garamond', serif; font-size: 14px; font-weight: 400; flex: 1; }
-  .pdf-sub { font-size: 11px; color: var(--gray); margin-top: 2px; }
+  .pdf-icon { width: 40px; height: 40px; background: var(--light-gray); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 10px; font-weight: 500; color: var(--gray); letter-spacing: .04em; margin-top: 4px; }
+  .pdf-title { font-family: 'EB Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.2; flex: 1; }
+  .pdf-sub { font-size: 15px; color: var(--gray); margin-top: 4px; font-weight: 300; line-height: 1.65; }
   .empty { color: var(--gray); font-size: 12px; padding: 1rem 0; font-style: italic; }
 
   .pdf-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; }
@@ -189,7 +189,9 @@
       </aside>
       <main class="main-content">
         <div class="section">
-          <div class="section-header"><span style="color:var(--gray);">★</span><span class="section-label">Pinned</span></div>
+          <div class="section-header">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gray)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 00-1.11-1.79l-1.78-.9A2 2 0 0115 10.76V6h1a2 2 0 000-4H8a2 2 0 000 4h1v4.76a2 2 0 01-1.11 1.79l-1.78.9A2 2 0 005 15.24V17z"/></svg>
+          </div>
           <ul class="article-list" id="pinned-list"></ul>
         </div>
         <div class="section">
@@ -273,6 +275,12 @@ async function get(table, params) {
   return r.json();
 }
 
+function formatDate(d) {
+  if (!d) return '';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+
 function articleHTML(a) {
   return `<li class="article-item">
     <div class="article-top">
@@ -281,7 +289,7 @@ function articleHTML(a) {
         <a class="article-title" href="${a.url||'#'}" target="_blank">${a.title}</a>
         ${a.context?`<p class="article-context">${a.context}</p>`:''}
       </div>
-      <span class="article-year">${a.year||''}</span>
+      <span class="article-year">${formatDate(a.date)||a.year||''}</span>
     </div>
   </li>`;
 }
@@ -324,9 +332,9 @@ function extractId(url, type) {
 
 async function load() {
   const [articles, videos, longform, settings] = await Promise.all([
-    get('articles','order=sort_order.asc,year.desc'),
-    get('videos','order=sort_order.asc'),
-    get('longform','order=sort_order.asc'),
+    get('articles','order=pinned.desc,date.desc'),
+    get('videos','order=date.desc'),
+    get('longform','order=date.desc'),
     get('settings','key=eq.bio&limit=1')
   ]);
 
@@ -359,24 +367,35 @@ async function load() {
   // VIDEO
   const videoHTML = vids.filter(v=>!v.pinned).map(v => {
     const embedId = extractId(v.url, v.type);
+    const dateStr = formatDate(v.date) || '';
     if (v.type === 'youtube' && embedId) {
       return `<div class="video-embed">
         <p class="video-embed-title">${v.title}</p>
-        <iframe src="https://www.youtube.com/embed/${embedId}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:4px;display:block;margin-top:8px;"></iframe>
+        ${dateStr ? `<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-bottom:8px;">${dateStr}</p>` : ''}
+        <iframe src="https://www.youtube.com/embed/${embedId}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:4px;display:block;"></iframe>
       </div>`;
     } else if (v.type === 'vimeo' && embedId) {
       return `<div class="video-embed">
         <p class="video-embed-title">${v.title}</p>
-        <iframe src="https://player.vimeo.com/video/${embedId}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:4px;display:block;margin-top:8px;"></iframe>
+        ${dateStr ? `<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-bottom:8px;">${dateStr}</p>` : ''}
+        <iframe src="https://player.vimeo.com/video/${embedId}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:4px;display:block;"></iframe>
       </div>`;
     } else if (v.type === 'tiktok' && embedId) {
       return `<div class="video-embed">
         <p class="video-embed-title">${v.title}</p>
+        ${dateStr ? `<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-bottom:8px;">${dateStr}</p>` : ''}
         <blockquote class="tiktok-embed" cite="${v.url}" data-video-id="${embedId}" style="max-width:100%;margin:8px 0 0;"><section></section></blockquote>
         <script async src="https://www.tiktok.com/embed.js"><\/script>
       </div>`;
     } else {
-      return `<a class="video-item" href="${v.url||'#'}" target="_blank"><div class="video-thumb">▶</div><span class="video-title">${v.title}</span><span style="color:var(--gray);">↗</span></a>`;
+      return `<a class="video-item" href="${v.url||'#'}" target="_blank">
+        <div class="video-thumb">▶</div>
+        <div style="flex:1;">
+          <span class="video-title">${v.title}</span>
+          ${dateStr ? `<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-top:3px;">${dateStr}</p>` : ''}
+        </div>
+        <span style="color:var(--gray);">↗</span>
+      </a>`;
     }
   }).join('');
 
@@ -386,7 +405,11 @@ async function load() {
   document.getElementById('longform-list').innerHTML = lfs.filter(p=>!p.pinned).map(p=>
     `<div class="pdf-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')">
       <div class="pdf-icon">PDF</div>
-      <div style="flex:1;"><p class="pdf-title">${p.title}</p><p class="pdf-sub">${p.sub||''}</p></div>
+      <div style="flex:1;">
+        <p class="pdf-title">${p.title}</p>
+        ${p.sub ? `<p class="pdf-sub">${p.sub}</p>` : ''}
+        ${formatDate(p.date) ? `<p style="font-family:'Outfit',sans-serif;font-size:11px;color:var(--gray);margin-top:3px;">${formatDate(p.date)}</p>` : ''}
+      </div>
       <span style="color:var(--gray);font-size:12px;">↗</span>
     </div>`
   ).join('') || '<p class="empty">Nessun longform ancora.</p>';

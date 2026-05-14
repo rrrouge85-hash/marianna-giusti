@@ -132,7 +132,7 @@
               <option value="exclusive">Exclusive</option>
             </select>
           </div>
-          <div><label>Anno</label><input type="text" id="new-year" placeholder="2024"></div>
+          <div><label>Data</label><input type="date" id="new-date"></div>
           <div style="display:flex;align-items:flex-end;padding-bottom:2px;">
             <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin:0;">
               <input type="checkbox" id="new-pinned"> Pinned
@@ -165,6 +165,7 @@
           <option value="link">Link esterno (Instagram, FT...)</option>
         </select>
         <label>URL</label><input type="url" id="new-vid-url" placeholder="https://...">
+        <label>Data</label><input type="date" id="new-vid-date">
         <div class="form-actions"><button class="btn btn-primary" onclick="addVideo()">Aggiungi</button></div>
       </div>
       <p class="section-title">Video pubblicati</p>
@@ -183,6 +184,7 @@
           <label>URL esterno</label>
           <input type="url" id="new-lf-url" placeholder="https://...">
         </div>
+        <label>Data</label><input type="date" id="new-lf-date">
         <div id="lf-upload-progress" style="display:none;font-size:12px;color:var(--gray);margin-top:8px;">Caricamento...</div>
         <div class="form-actions"><button class="btn btn-primary" onclick="addLongform()">Aggiungi</button></div>
       </div>
@@ -305,9 +307,10 @@ function showTab(id,el) {
 }
 
 async function addArticle() {
-  const title=document.getElementById('new-title').value.trim(); if(!title)return;
-  await sbPost('articles',{title,tag:document.getElementById('new-tag').value,year:document.getElementById('new-year').value||''+new Date().getFullYear(),context:document.getElementById('new-context').value,url:document.getElementById('new-url').value||'#',pinned:document.getElementById('new-pinned').checked,sort_order:999});
-  ['new-title','new-context','new-url','new-year'].forEach(id=>document.getElementById(id).value='');
+  const title = document.getElementById('new-title').value.trim();
+  if (!title) return;
+  await sbPost('articles',{title,tag:document.getElementById('new-tag').value,date:document.getElementById('new-date').value||null,context:document.getElementById('new-context').value,url:document.getElementById('new-url').value||'#',pinned:document.getElementById('new-pinned').checked,sort_order:999});
+  ['new-title','new-context','new-url','new-date'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('new-pinned').checked=false;
   await loadArticles(); toast('Articolo aggiunto ✓');
 }
@@ -337,9 +340,10 @@ async function addVideo() {
     title,
     type: document.getElementById('new-vid-type').value,
     url: document.getElementById('new-vid-url').value || '#',
+    date: document.getElementById('new-vid-date').value || null,
     sort_order: 999
   });
-  ['new-vid-title','new-vid-url'].forEach(id=>document.getElementById(id).value='');
+  ['new-vid-title','new-vid-url','new-vid-date'].forEach(id=>document.getElementById(id).value='');
   await loadVideos(); toast('Video aggiunto ✓');
 }
 
@@ -385,10 +389,11 @@ async function addLongform() {
     title,
     sub: document.getElementById('new-lf-sub').value,
     url: url || '#',
+    date: document.getElementById('new-lf-date').value || null,
     sort_order: 999
   });
 
-  ['new-lf-title','new-lf-sub','new-lf-url'].forEach(id=>document.getElementById(id).value='');
+  ['new-lf-title','new-lf-sub','new-lf-url','new-lf-date'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('new-lf-file').value = '';
   await loadLongform(); toast('Longform aggiunto ✓');
 }
