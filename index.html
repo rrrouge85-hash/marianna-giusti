@@ -83,6 +83,73 @@
   .contact-item:first-child { border-top: 0.5px solid var(--border); }
   .contact-item:hover { opacity: 0.7; }
   .contact-item span { flex: 1; }
+
+  /* TAB BAR MOBILE */
+  .tab-bar { display: none; }
+
+  @media (max-width: 768px) {
+    .container { padding: 0 1.25rem; }
+    .home-grid { grid-template-columns: 1fr; min-height: auto; }
+    .sidebar {
+      border-right: none;
+      border-bottom: 0.5px solid var(--border);
+      padding: 2rem 0 2rem;
+      position: static;
+      height: auto;
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+    .sidebar img {
+      width: 120px !important;
+      height: 120px !important;
+      aspect-ratio: 1/1 !important;
+      margin-bottom: 0 !important;
+      border-radius: 4px;
+    }
+    .sidebar-text { display: flex; flex-direction: column; justify-content: center; }
+    .hero-name { font-size: 30px; margin-bottom: .75rem; }
+    .hero-bio { font-size: 12px; margin-bottom: 1rem; }
+    .hero-links { flex-direction: row; flex-wrap: wrap; gap: .5rem; }
+    .hero-links a { font-size: 10px; }
+    .main-content { padding: 2rem 0 6rem; }
+    .section { margin-bottom: 2rem; }
+
+    footer { padding: 1.25rem; flex-direction: column; gap: .75rem; text-align: center; margin-bottom: 56px; }
+    .footer-links { justify-content: center; }
+
+    .tab-bar {
+      display: flex;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
+      border-top: 0.5px solid var(--border);
+      z-index: 100;
+      height: 56px;
+    }
+    .tab-bar a {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--gray);
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .tab-bar a.active { color: var(--black); }
+    .tab-bar a svg { width: 18px; height: 18px; }
+
+    .contact-wrap { padding: 2rem 0 6rem; }
+    .pdf-modal { width: 100vw; height: 100vh; border-radius: 0; }
+  }
 </style>
 </head>
 <body>
@@ -93,13 +160,15 @@
     <div class="home-grid">
       <aside class="sidebar">
         <img src="https://uapkjifuwudofxxnntdm.supabase.co/storage/v1/object/public/marianna-giusti/marianna-giusti.png" alt="Marianna Giusti" style="width:100%;aspect-ratio:1/1;object-fit:cover;object-position:center top;border-radius:4px;margin-bottom:1.75rem;display:block;">
-        <h1 class="hero-name">Marianna<br><em>Giusti</em></h1>
-        <p class="hero-bio" id="bio-text"></p>
-        <div class="hero-links">
-          <a href="https://x.com/mauipippa" target="_blank">↗ X</a>
-          <a href="https://www.linkedin.com/in/marianna-giusti-466b91a9/" target="_blank">↗ LinkedIn</a>
-          <a href="https://www.ft.com/marianna-giusti" target="_blank">↗ See all my recent FT stories here</a>
-          <a href="mailto:giustimarianna7@gmail.com">↗ Email</a>
+        <div class="sidebar-text">
+          <h1 class="hero-name">Marianna<br><em>Giusti</em></h1>
+          <p class="hero-bio" id="bio-text"></p>
+          <div class="hero-links">
+            <a href="https://x.com/mauipippa" target="_blank">↗ X</a>
+            <a href="https://www.linkedin.com/in/marianna-giusti-466b91a9/" target="_blank">↗ LinkedIn</a>
+            <a href="https://www.ft.com/marianna-giusti" target="_blank">↗ See all my recent FT stories</a>
+            <a href="mailto:giustimarianna7@gmail.com">↗ Email</a>
+          </div>
         </div>
       </aside>
       <main class="main-content">
@@ -151,6 +220,21 @@
     <iframe id="pdf-iframe" src=""></iframe>
   </div>
 </div>
+
+<nav class="tab-bar">
+  <a class="active" id="tab-home" onclick="showPage('home',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+    Home
+  </a>
+  <a id="tab-portfolio" onclick="showPage('portfolio',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+    Portfolio
+  </a>
+  <a id="tab-contact" onclick="showPage('contact',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    Contact
+  </a>
+</nav>
 
 <footer>
   <span class="footer-name">Marianna Giusti</span>
@@ -292,11 +376,13 @@ async function load() {
   ).join('') || '<p class="empty">Nessun longform ancora.</p>';
 }
 
-function showPage(id,el) {
+function showPage(id, el) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  document.querySelectorAll('.nav-links a, .tab-bar a').forEach(a=>a.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  if(el) el.classList.add('active');
+  if (el) el.classList.add('active');
+  const tabEl = document.getElementById('tab-'+id);
+  if (tabEl) tabEl.classList.add('active');
   window.scrollTo(0,0);
 }
 
