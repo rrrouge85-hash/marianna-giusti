@@ -72,7 +72,8 @@
   .pdf-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; cursor: pointer; }
   .pdf-item:first-child { border-top: 0.5px solid var(--border); }
   .pdf-item:hover { opacity: 0.7; }
-  .pdf-icon { width: 40px; height: 40px; background: var(--light-gray); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 10px; font-weight: 500; color: var(--gray); letter-spacing: .04em; margin-top: 4px; }
+  .pdf-icon { width: 40px; height: 40px; background: var(--light-gray); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 4px; }
+  .video-thumb { width: 60px; height: 44px; background: var(--light-gray); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .pdf-title { font-family: 'EB Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.2; flex: 1; }
   .pdf-sub { font-size: 15px; color: var(--gray); margin-top: 4px; font-weight: 300; line-height: 1.65; }
   .ig-embed-wrap { margin-top: 10px; max-width: 540px; }
@@ -350,6 +351,10 @@ function extractId(url, type) {
   return null;
 }
 
+const ICON_LONGFORM = `<svg width="22" height="22" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="4" width="20" height="26" rx="2" stroke="#bbb" stroke-width="1.2"/><path d="M10 10h12M10 14h12M10 18h8" stroke="#bbb" stroke-width="1.2" stroke-linecap="round"/></svg>`;
+
+const ICON_VIDEO = `<svg width="26" height="20" viewBox="0 0 36 28" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="32" height="24" rx="2" stroke="#bbb" stroke-width="1.2"/><path d="M14 9.5l10 4.5-10 4.5V9.5z" stroke="#bbb" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
+
 async function load() {
   const [articles, videos, longform, settings] = await Promise.all([
     get('articles','order=pinned.desc,date.desc'),
@@ -372,8 +377,8 @@ async function load() {
 
   const pinnedHTML = [
     ...pinnedArts.map(articleHTML),
-    ...pinnedVids.map(v=>`<li class="article-item"><a class="article-title" href="${v.url||'#'}" target="_blank">▶ ${v.title}</a>${v.context?`<p class="article-context">${v.context}</p>`:''}${formatDate(v.date)?`<span class="item-date">${formatDate(v.date)}</span>`:''}</li>`),
-    ...pinnedLfs.map(p=>`<li class="article-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')"><a class="article-title">PDF — ${p.title}</a>${p.context?`<p class="article-context">${p.context}</p>`:p.sub?`<p class="article-context">${p.sub}</p>`:''}${formatDate(p.date)?`<span class="item-date">${formatDate(p.date)}</span>`:''}</li>`)
+    ...pinnedVids.map(v=>`<li class="article-item"><a class="article-title" href="${v.url||'#'}" target="_blank">${v.title}</a>${v.context?`<p class="article-context">${v.context}</p>`:''}${formatDate(v.date)?`<span class="item-date">${formatDate(v.date)}</span>`:''}</li>`),
+    ...pinnedLfs.map(p=>`<li class="article-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')"><a class="article-title">${p.title}</a>${p.context?`<p class="article-context">${p.context}</p>`:p.sub?`<p class="article-context">${p.sub}</p>`:''}${formatDate(p.date)?`<span class="item-date">${formatDate(p.date)}</span>`:''}</li>`)
   ].join('');
 
   document.getElementById('pinned-list').innerHTML = pinnedHTML || '<li class="empty">Nessun contenuto pinnato.</li>';
@@ -419,7 +424,7 @@ async function load() {
       </div>`;
     } else {
       return `<a class="video-item" href="${v.url||'#'}" target="_blank">
-        <div class="video-thumb">▶</div>
+        <div class="video-thumb">${ICON_VIDEO}</div>
         <div style="flex:1;">
           <span class="video-title">${v.title}</span>
           ${ctx}${date}
@@ -433,7 +438,7 @@ async function load() {
     const ctx = p.context ? `<p class="pdf-sub">${p.context}</p>` : (p.sub ? `<p class="pdf-sub">${p.sub}</p>` : '');
     const date = formatDate(p.date) ? `<span style="${DATE_STYLE}">${formatDate(p.date)}</span>` : '';
     return `<div class="pdf-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')">
-      <div class="pdf-icon">PDF</div>
+      <div class="pdf-icon">${ICON_LONGFORM}</div>
       <div style="flex:1;">
         <p class="pdf-title">${p.title}</p>
         ${ctx}${date}
