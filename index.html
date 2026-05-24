@@ -72,8 +72,8 @@
   .pdf-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; cursor: pointer; }
   .pdf-item:first-child { border-top: 0.5px solid var(--border); }
   .pdf-item:hover { opacity: 0.7; }
-  .pdf-icon { width: 56px; height: 72px; background: var(--light-gray); border-radius: 3px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; overflow: hidden; }
-  .pdf-icon img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+  .pdf-icon { width: 72px; flex-shrink: 0; margin-top: 2px; }
+  .pdf-icon img { width: 72px; height: auto; display: block; border-radius: 2px; box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
   .video-thumb { width: 60px; height: 44px; background: var(--light-gray); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .pdf-title { font-family: 'EB Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.2; flex: 1; }
   .pdf-sub { font-size: 15px; color: var(--gray); margin-top: 4px; font-weight: 300; line-height: 1.65; }
@@ -438,11 +438,9 @@ async function load() {
   function longformHTML(p) {
     const ctx = p.context ? `<p class="pdf-sub">${p.context}</p>` : (p.sub ? `<p class="pdf-sub">${p.sub}</p>` : '');
     const date = formatDate(p.date) ? `<span class="item-date">${formatDate(p.date)}</span>` : '';
-    const thumb = p.thumbnail_url
-      ? `<img src="${p.thumbnail_url}" alt="${p.title}">`
-      : ICON_LONGFORM;
+    const thumb = p.thumbnail_url ? `<div class="pdf-icon"><img src="${p.thumbnail_url}" alt="${p.title}"></div>` : '';
     return `<div class="pdf-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')">
-      <div class="pdf-icon">${thumb}</div>
+      ${thumb}
       <div style="flex:1;">
         <p class="pdf-title">${p.title}</p>
         ${ctx}${date}

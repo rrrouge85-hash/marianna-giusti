@@ -189,7 +189,9 @@
         <p class="add-form-title">Aggiungi longform</p>
         <label>Titolo</label><input type="text" id="new-lf-title" placeholder="Titolo del pezzo">
         <label>Pubblicazione</label><input type="text" id="new-lf-sub" placeholder="FT Weekend Magazine">
-        <label>URL Thumbnail (copertina)</label><input type="url" id="new-lf-thumb" placeholder="https://...">
+        <label>Copertina (immagine)</label>
+        <input type="file" id="new-lf-thumb-file" accept="image/*" style="font-size:12px;color:var(--gray);width:100%;padding:8px 0;">
+        <div id="lf-thumb-progress" style="display:none;font-size:12px;color:var(--gray);margin-top:4px;">Caricamento...</div>
         <label>Contesto</label><textarea id="new-lf-context" rows="2" placeholder="Due righe descrittive..."></textarea>
         <div style="margin-top:12px;">
           <label style="margin-top:0;">Carica PDF</label>
@@ -425,7 +427,7 @@ async function addLongform() {
   await sbPost('longform', {
     title,
     sub: document.getElementById('new-lf-sub').value,
-    thumbnail_url: document.getElementById('new-lf-thumb').value || null,
+    thumbnail_url: null,
     context: document.getElementById('new-lf-context').value,
     url: url || '#',
     date: document.getElementById('new-lf-date').value || null,
@@ -433,8 +435,35 @@ async function addLongform() {
     sort_order: 999
   });
 
-  ['new-lf-title','new-lf-sub','new-lf-url','new-lf-date','new-lf-thumb'].forEach(id=>document.getElementById(id).value='');
+  // Upload thumbnail if present — update after insert
+  const thumbFile = document.getElementById('new-lf-thumb-file').files[0];
+  if (thumbFile) {
+    const thumbProgress = document.getElementById('lf-thumb-progress');
+    thumbProgress.style.display = 'block';
+    thumbProgress.textContent = 'Caricamento copertina...';
+    const ext = thumbFile.name.split('.').pop();
+    const thumbName = `${Date.now()}-cover.${ext}`;
+    const thumbRes = await fetch(`${SB_URL}/storage/v1/object/marianna-giusti/covers/${thumbName}`, {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + authToken, 'Content-Type': thumbFile.type },
+      body: thumbFile
+    });
+    if (thumbRes.ok) {
+      const thumbUrl = `${SB_URL}/storage/v1/object/public/marianna-giusti/covers/${thumbName}`;
+      const latest = await sbGet('longform', 'order=id.desc&limit=1');
+      if (Array.isArray(latest) && latest[0]) {
+        await sbPatch('longform', latest[0].id, { thumbnail_url: thumbUrl });
+      }
+      thumbProgress.textContent = 'Copertina caricata ✓';
+      setTimeout(() => { thumbProgress.style.display = 'none'; }, 2000);
+    } else {
+      document.getElementById('lf-thumb-progress').textContent = 'Errore caricamento copertina.';
+    }
+  }
+
+  ['new-lf-title','new-lf-sub','new-lf-url','new-lf-date'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('new-lf-file').value = '';
+  document.getElementById('new-lf-thumb-file').value = '';
   document.getElementById('new-lf-context').value = '';
   document.getElementById('new-lf-pinned').checked = false;
   await loadLongform(); toast('Longform aggiunto ✓');
@@ -445,10 +474,29 @@ async function deleteLongform(id) { if(!confirm('Eliminare?'))return; await sbDe
 async function toggleLfPin(id,current) { await sbPatch('longform',id,{pinned:!current}); await loadLongform(); toast(!current?'Pinnato ✓':'Pin rimosso'); }
 
 async function saveLongform(id) {
-  await sbPatch('longform',id,{
+  let thumbnailUrl = document.getElementById('lfth-'+id).value || null;
+
+  const thumbFile = document.getElementById('lfth-file-'+id).files[0];
+  if (thumbFile) {
+    const prog = document.getElementById('lfth-prog-'+id);
+    prog.style.display = 'inline'; prog.textContent = 'Caricamento...';
+    const ext = thumbFile.name.split('.').pop();
+    const name = `${Date.now()}-cover.${ext}`;
+    const res = await fetch(`${SB_URL}/storage/v1/object/marianna-giusti/covers/${name}`, {
+      method: 'POST',
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + authToken, 'Content-Type': thumbFile.type },
+      body: thumbFile
+    });
+    if (res.ok) {
+      thumbnailUrl = `${SB_URL}/storage/v1/object/public/marianna-giusti/covers/${name}`;
+      prog.textContent = '✓';
+    } else { prog.textContent = 'Errore'; }
+  }
+
+  await sbPatch('longform', id, {
     title: document.getElementById('lft-'+id).value,
     sub: document.getElementById('lfs-'+id).value,
-    thumbnail_url: document.getElementById('lfth-'+id).value || null,
+    thumbnail_url: thumbnailUrl,
     context: document.getElementById('lfc-'+id).value,
     url: document.getElementById('lfu-'+id).value,
     date: document.getElementById('lfd-'+id).value || null,
@@ -580,7 +628,11 @@ async function loadLongform() {
         <label>Pubblicazione</label>
         <input type="text" id="lfs-${x.id}" value="${(x.sub||'').replace(/"/g,'&quot;')}">
         <label>URL Thumbnail</label>
-        <input type="url" id="lfth-${x.id}" value="${x.thumbnail_url||''}">
+        <input type="url" id="lfth-${x.id}" value="${x.thumbnail_url||''}" placeholder="https://...">
+        <div style="margin-top:6px;">
+          <input type="file" id="lfth-file-${x.id}" accept="image/*" style="font-size:11px;color:var(--gray);">
+          <span id="lfth-prog-${x.id}" style="font-size:11px;color:var(--gray);display:none;margin-left:8px;">Caricamento...</span>
+        </div>
         <label>Contesto</label>
         <textarea id="lfc-${x.id}" rows="2">${x.context||''}</textarea>
         <label>URL PDF</label>
