@@ -34,6 +34,13 @@
   .nav-links { display: flex; gap: 2rem; list-style: none; }
   .nav-links a { font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--gray); transition: color 0.15s; cursor: pointer; }
   .nav-links a:hover, .nav-links a.active { color: var(--black); }
+  .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; }
+  .hamburger span { display: block; width: 20px; height: 1.5px; background: var(--black); }
+  .menu-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--white); z-index: 200; flex-direction: column; padding: 1.5rem; }
+  .menu-overlay.open { display: flex; }
+  .menu-close { align-self: flex-end; font-size: 26px; background: none; border: none; cursor: pointer; color: var(--gray); padding: 4px; line-height: 1; }
+  .menu-links { list-style: none; margin-top: 2rem; display: flex; flex-direction: column; }
+  .menu-links li a { display: block; font-family: 'EB Garamond', serif; font-size: 36px; font-weight: 400; color: var(--black); padding: 1rem 0; border-bottom: 0.5px solid var(--border); cursor: pointer; }
   .container { max-width: 1100px; margin: 0 auto; padding: 0 2.5rem; }
   .page { display: none; }
   .page.active { display: block; }
@@ -88,7 +95,7 @@
   .pdf-modal-close { font-size: 22px; color: var(--gray); cursor: pointer; line-height: 1; background: none; border: none; padding: 0 4px; }
   .pdf-modal-close:hover { color: var(--black); }
   .pdf-modal iframe { flex: 1; width: 100%; border: none; }
-  footer { border-top: 0.5px solid var(--border); padding: 1.5rem 2.5rem; display: flex; justify-content: space-between; align-items: center; }
+  footer { position: sticky; bottom: 0; z-index: 50; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-top: 0.5px solid var(--border); padding: 1rem 2.5rem; display: flex; justify-content: space-between; align-items: center; }
   .footer-name { font-family: 'EB Garamond', serif; font-size: 13px; color: var(--gray); }
   .footer-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
   .footer-links { display: flex; gap: 1.5rem; list-style: none; }
@@ -109,6 +116,9 @@
 
   @media (max-width: 768px) {
     .container { padding: 0 1.25rem; }
+    .nav { padding: 0 1.25rem; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
     .home-grid { grid-template-columns: 1fr; min-height: auto; }
     .sidebar {
       border-right: none;
@@ -137,8 +147,8 @@
     .main-content { padding: 2rem 0 6rem; }
     .section { margin-bottom: 2rem; }
 
-    footer { padding: 1.25rem; flex-direction: column; gap: .75rem; text-align: center; margin-bottom: 56px; }
-    .footer-links { justify-content: center; }
+    footer { display: none; }
+    .floating-pill { bottom: 1.25rem; right: 1.25rem; }
 
     .tab-bar {
       display: flex;
@@ -173,22 +183,62 @@
     .anchor-block { display: none; }
   }
 
-  .anchor-block {
-    margin-top: 2rem; padding-top: 1.5rem;
-    border-top: 0.5px solid var(--border);
-    display: flex; flex-direction: column; gap: 1.25rem;
+  .floating-pill {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 150;
+    display: none;
+    align-items: center;
+    background: rgba(255,255,255,0.97);
+    border: 0.5px solid var(--border);
+    border-radius: 100px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   }
-  .anchor-item { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; text-decoration: none; }
-  .anchor-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border); margin-top: 5px; flex-shrink: 0; transition: background 0.2s; }
-  .anchor-item.active .anchor-dot { background: var(--black); }
-  .anchor-info { display: flex; flex-direction: column; gap: 2px; }
-  .anchor-name { font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--lighter-gray); transition: color 0.2s; }
-  .anchor-item.active .anchor-name { color: var(--black); }
-  .anchor-count { font-size: 11px; color: var(--lighter-gray); font-weight: 300; }
+  .floating-pill.visible { display: flex; }
+  .pill-btn {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gray);
+    padding: 9px 16px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-right: 0.5px solid var(--border);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .pill-btn:last-child { border-right: none; }
+  .pill-btn:hover { color: var(--black); background: var(--light-gray); }
+  .pill-btn.active { color: var(--black); background: var(--light-gray); }
 </style>
 </head>
 <body>
 
+<nav class="nav">
+  <span class="nav-name">Marianna Giusti</span>
+  <ul class="nav-links" id="nav-links">
+    <li><a class="active" onclick="showPage('home',this)">Home</a></li>
+    <li><a onclick="showPage('portfolio',this)">Portfolio</a></li>
+    <li><a onclick="showPage('contact',this)">Contact</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="menu-overlay" id="menu-overlay">
+  <button class="menu-close" onclick="toggleMenu()">×</button>
+  <ul class="menu-links">
+    <li><a onclick="showPage('home',this);toggleMenu();">Home</a></li>
+    <li><a onclick="showPage('portfolio',this);toggleMenu();">Portfolio</a></li>
+    <li><a onclick="showPage('contact',this);toggleMenu();">Contact</a></li>
+  </ul>
+</div>
 
 <div id="page-home" class="page active">
   <div class="container">
@@ -203,29 +253,6 @@
             <a href="https://www.linkedin.com/in/marianna-giusti-466b91a9/" target="_blank">↗ LinkedIn</a>
             <a href="https://www.ft.com/marianna-giusti" target="_blank">↗ See all my recent FT stories</a>
             <a href="mailto:giustimarianna7@gmail.com">↗ Email</a>
-          </div>
-          <div class="anchor-block">
-            <a class="anchor-item active" id="anchor-longform" onclick="scrollToSection('section-longform','anchor-longform')">
-              <div class="anchor-dot"></div>
-              <div class="anchor-info">
-                <span class="anchor-name">Longform</span>
-                <span class="anchor-count" id="count-longform"></span>
-              </div>
-            </a>
-            <a class="anchor-item" id="anchor-video" onclick="scrollToSection('section-video','anchor-video')">
-              <div class="anchor-dot"></div>
-              <div class="anchor-info">
-                <span class="anchor-name">Video</span>
-                <span class="anchor-count" id="count-video"></span>
-              </div>
-            </a>
-            <a class="anchor-item" id="anchor-newspaper" onclick="scrollToSection('section-newspaper','anchor-newspaper')">
-              <div class="anchor-dot"></div>
-              <div class="anchor-info">
-                <span class="anchor-name">Newspaper</span>
-                <span class="anchor-count" id="count-newspaper"></span>
-              </div>
-            </a>
           </div>
         </div>
       </aside>
@@ -293,20 +320,11 @@
   </div>
 </div>
 
-<nav class="tab-bar">
-  <a class="active" id="tab-home" onclick="showPage('home',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
-    Home
-  </a>
-  <a id="tab-portfolio" onclick="showPage('portfolio',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
-    Portfolio
-  </a>
-  <a id="tab-contact" onclick="showPage('contact',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-    Contact
-  </a>
-</nav>
+<div class="floating-pill" id="floating-pill">
+  <button class="pill-btn active" id="pill-longform" onclick="scrollToSection('section-longform','pill-longform')">Longform</button>
+  <button class="pill-btn" id="pill-video" onclick="scrollToSection('section-video','pill-video')">Video</button>
+  <button class="pill-btn" id="pill-newspaper" onclick="scrollToSection('section-newspaper','pill-newspaper')">Newspaper</button>
+</div>
 
 <footer>
   <span class="footer-name">Marianna Giusti</span>
@@ -508,31 +526,41 @@ async function load() {
   document.getElementById('longform-list').innerHTML = lfs.filter(p=>!p.pinned).map(longformHTML).join('') || '<p class="empty">Nessun longform ancora.</p>';
 
   initObserver();
+  document.getElementById('floating-pill').classList.add('visible');
 }
 
-function scrollToSection(sectionId, anchorId) {
+function toggleMenu() {
+  document.getElementById('menu-overlay').classList.toggle('open');
+}
+
+function scrollToSection(sectionId, pillId) {
   const el = document.getElementById(sectionId);
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  setActiveAnchor(anchorId);
+  setPillActive(pillId);
+}
+
+function setPillActive(pillId) {
+  document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById(pillId);
+  if (el) el.classList.add('active');
 }
 
 function setActiveAnchor(anchorId) {
-  document.querySelectorAll('.anchor-item').forEach(a => a.classList.remove('active'));
-  const el = document.getElementById(anchorId);
-  if (el) el.classList.add('active');
+  const map = { 'anchor-longform': 'pill-longform', 'anchor-video': 'pill-video', 'anchor-newspaper': 'pill-newspaper' };
+  setPillActive(map[anchorId] || anchorId);
 }
 
 function initObserver() {
   const sections = [
-    { id: 'section-longform', anchor: 'anchor-longform' },
-    { id: 'section-video', anchor: 'anchor-video' },
-    { id: 'section-newspaper', anchor: 'anchor-newspaper' }
+    { id: 'section-longform', anchor: 'anchor-longform', pill: 'pill-longform' },
+    { id: 'section-video', anchor: 'anchor-video', pill: 'pill-video' },
+    { id: 'section-newspaper', anchor: 'anchor-newspaper', pill: 'pill-newspaper' }
   ];
   const obs = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         const match = sections.find(s => s.id === entry.target.id);
-        if (match) setActiveAnchor(match.anchor);
+        if (match) setPillActive(match.pill);
       }
     });
   }, { threshold: 0.2, rootMargin: '-10% 0px -60% 0px' });
@@ -545,11 +573,11 @@ function initObserver() {
 
 function showPage(id, el) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-links a, .tab-bar a').forEach(a=>a.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   if (el) el.classList.add('active');
-  const tabEl = document.getElementById('tab-'+id);
-  if (tabEl) tabEl.classList.add('active');
+  const pill = document.getElementById('floating-pill');
+  if (pill) pill.classList.toggle('visible', id === 'home');
   window.scrollTo(0,0);
 }
 
