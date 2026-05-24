@@ -189,6 +189,7 @@
         <p class="add-form-title">Aggiungi longform</p>
         <label>Titolo</label><input type="text" id="new-lf-title" placeholder="Titolo del pezzo">
         <label>Pubblicazione</label><input type="text" id="new-lf-sub" placeholder="FT Weekend Magazine">
+        <label>URL Thumbnail (copertina)</label><input type="url" id="new-lf-thumb" placeholder="https://...">
         <label>Contesto</label><textarea id="new-lf-context" rows="2" placeholder="Due righe descrittive..."></textarea>
         <div style="margin-top:12px;">
           <label style="margin-top:0;">Carica PDF</label>
@@ -424,6 +425,7 @@ async function addLongform() {
   await sbPost('longform', {
     title,
     sub: document.getElementById('new-lf-sub').value,
+    thumbnail_url: document.getElementById('new-lf-thumb').value || null,
     context: document.getElementById('new-lf-context').value,
     url: url || '#',
     date: document.getElementById('new-lf-date').value || null,
@@ -431,8 +433,9 @@ async function addLongform() {
     sort_order: 999
   });
 
-  ['new-lf-title','new-lf-sub','new-lf-url','new-lf-date'].forEach(id=>document.getElementById(id).value='');
+  ['new-lf-title','new-lf-sub','new-lf-url','new-lf-date','new-lf-thumb'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('new-lf-file').value = '';
+  document.getElementById('new-lf-context').value = '';
   document.getElementById('new-lf-pinned').checked = false;
   await loadLongform(); toast('Longform aggiunto ✓');
 }
@@ -445,6 +448,7 @@ async function saveLongform(id) {
   await sbPatch('longform',id,{
     title: document.getElementById('lft-'+id).value,
     sub: document.getElementById('lfs-'+id).value,
+    thumbnail_url: document.getElementById('lfth-'+id).value || null,
     context: document.getElementById('lfc-'+id).value,
     url: document.getElementById('lfu-'+id).value,
     date: document.getElementById('lfd-'+id).value || null,
@@ -575,6 +579,8 @@ async function loadLongform() {
         <input type="text" id="lft-${x.id}" value="${(x.title||'').replace(/"/g,'&quot;')}">
         <label>Pubblicazione</label>
         <input type="text" id="lfs-${x.id}" value="${(x.sub||'').replace(/"/g,'&quot;')}">
+        <label>URL Thumbnail</label>
+        <input type="url" id="lfth-${x.id}" value="${x.thumbnail_url||''}">
         <label>Contesto</label>
         <textarea id="lfc-${x.id}" rows="2">${x.context||''}</textarea>
         <label>URL PDF</label>
