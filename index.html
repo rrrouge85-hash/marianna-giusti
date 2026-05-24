@@ -426,10 +426,13 @@ async function load() {
   const vids = Array.isArray(videos) ? videos : [];
   const lfs = Array.isArray(longform) ? longform : [];
 
-  // Anchor counts
-  document.getElementById('count-longform').textContent = `${lfs.length} piece${lfs.length !== 1 ? 's' : ''}`;
-  document.getElementById('count-video').textContent = `${vids.length} video${vids.length !== 1 ? 's' : ''}`;
-  document.getElementById('count-newspaper').textContent = `${arts.filter(a=>!a.pinned).length} article${arts.filter(a=>!a.pinned).length !== 1 ? 's' : ''}`;
+  // Anchor counts (se presenti)
+  const cl = document.getElementById('count-longform');
+  const cv = document.getElementById('count-video');
+  const cn = document.getElementById('count-newspaper');
+  if (cl) cl.textContent = `${lfs.length} piece${lfs.length !== 1 ? 's' : ''}`;
+  if (cv) cv.textContent = `${vids.length} video${vids.length !== 1 ? 's' : ''}`;
+  if (cn) cn.textContent = `${arts.filter(a=>!a.pinned).length} article${arts.filter(a=>!a.pinned).length !== 1 ? 's' : ''}`;
 
   // PINNED — tutti i tipi
   const pinnedArts = arts.filter(a=>a.pinned);
