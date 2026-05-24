@@ -170,7 +170,21 @@
 
     .contact-wrap { padding: 2rem 0 6rem; }
     .pdf-modal { width: 100vw; height: 100vh; border-radius: 0; }
+    .anchor-block { display: none; }
   }
+
+  .anchor-block {
+    margin-top: 2rem; padding-top: 1.5rem;
+    border-top: 0.5px solid var(--border);
+    display: flex; flex-direction: column; gap: 1.25rem;
+  }
+  .anchor-item { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; text-decoration: none; }
+  .anchor-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border); margin-top: 5px; flex-shrink: 0; transition: background 0.2s; }
+  .anchor-item.active .anchor-dot { background: var(--black); }
+  .anchor-info { display: flex; flex-direction: column; gap: 2px; }
+  .anchor-name { font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--lighter-gray); transition: color 0.2s; }
+  .anchor-item.active .anchor-name { color: var(--black); }
+  .anchor-count { font-size: 11px; color: var(--lighter-gray); font-weight: 300; }
 </style>
 </head>
 <body>
@@ -190,6 +204,29 @@
             <a href="https://www.ft.com/marianna-giusti" target="_blank">↗ See all my recent FT stories</a>
             <a href="mailto:giustimarianna7@gmail.com">↗ Email</a>
           </div>
+          <div class="anchor-block">
+            <a class="anchor-item active" id="anchor-longform" onclick="scrollToSection('section-longform','anchor-longform')">
+              <div class="anchor-dot"></div>
+              <div class="anchor-info">
+                <span class="anchor-name">Longform</span>
+                <span class="anchor-count" id="count-longform"></span>
+              </div>
+            </a>
+            <a class="anchor-item" id="anchor-video" onclick="scrollToSection('section-video','anchor-video')">
+              <div class="anchor-dot"></div>
+              <div class="anchor-info">
+                <span class="anchor-name">Video</span>
+                <span class="anchor-count" id="count-video"></span>
+              </div>
+            </a>
+            <a class="anchor-item" id="anchor-newspaper" onclick="scrollToSection('section-newspaper','anchor-newspaper')">
+              <div class="anchor-dot"></div>
+              <div class="anchor-info">
+                <span class="anchor-name">Newspaper</span>
+                <span class="anchor-count" id="count-newspaper"></span>
+              </div>
+            </a>
+          </div>
         </div>
       </aside>
       <main class="main-content">
@@ -199,15 +236,15 @@
           </div>
           <ul class="article-list" id="pinned-list"></ul>
         </div>
-        <div class="section">
+        <div class="section" id="section-longform">
           <div class="section-header"><span class="section-label">Longform</span></div>
           <div id="longform-list"></div>
         </div>
-        <div class="section">
+        <div class="section" id="section-video">
           <div class="section-header"><span class="section-label">Video</span></div>
           <div id="video-list"></div>
         </div>
-        <div class="section">
+        <div class="section" id="section-newspaper">
           <div class="section-header"><span class="section-label">Newspaper</span></div>
           <ul class="article-list" id="newspaper-list"></ul>
         </div>
@@ -337,7 +374,7 @@ function extractId(url, type) {
   if (!url) return null;
   try {
     if (type === 'youtube') {
-      const m = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+      const m = url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
       return m ? m[1] : null;
     }
     if (type === 'vimeo') {
@@ -366,6 +403,11 @@ async function load() {
 
   const bio = Array.isArray(settings) && settings[0] ? settings[0].value : '';
   document.getElementById('bio-text').textContent = bio;
+
+  // Anchor counts
+  document.getElementById('count-longform').textContent = `${lfs.length} piece${lfs.length !== 1 ? 's' : ''}`;
+  document.getElementById('count-video').textContent = `${vids.length} video${vids.length !== 1 ? 's' : ''}`;
+  document.getElementById('count-newspaper').textContent = `${arts.filter(a=>!a.pinned).length} article${arts.filter(a=>!a.pinned).length !== 1 ? 's' : ''}`;
 
   const arts = Array.isArray(articles) ? articles : [];
   const vids = Array.isArray(videos) ? videos : [];
@@ -405,10 +447,13 @@ async function load() {
         <div class="ig-embed-wrap">${v.embed_code}</div>
       </div>`;
     } else if (v.type === 'youtube' && embedId) {
+      const isShort = v.url && v.url.includes('/shorts/');
+      const ratio = isShort ? '9/16' : '16/9';
+      const maxW = isShort ? 'max-width:340px;' : '';
       return `<div class="video-embed">
         <p class="video-embed-title">${v.title}</p>
         ${ctx}${date}
-        <iframe src="https://www.youtube.com/embed/${embedId}" frameborder="0" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:4px;display:block;margin-top:10px;"></iframe>
+        <iframe src="https://www.youtube.com/embed/${embedId}" frameborder="0" allowfullscreen allow="autoplay; encrypted-media" style="width:100%;${maxW}aspect-ratio:${ratio};border-radius:4px;display:block;margin-top:10px;"></iframe>
       </div>`;
     } else if (v.type === 'vimeo' && embedId) {
       return `<div class="video-embed">
@@ -461,6 +506,41 @@ async function load() {
 
   // LONGFORM
   document.getElementById('longform-list').innerHTML = lfs.filter(p=>!p.pinned).map(longformHTML).join('') || '<p class="empty">Nessun longform ancora.</p>';
+
+  initObserver();
+}
+
+function scrollToSection(sectionId, anchorId) {
+  const el = document.getElementById(sectionId);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setActiveAnchor(anchorId);
+}
+
+function setActiveAnchor(anchorId) {
+  document.querySelectorAll('.anchor-item').forEach(a => a.classList.remove('active'));
+  const el = document.getElementById(anchorId);
+  if (el) el.classList.add('active');
+}
+
+function initObserver() {
+  const sections = [
+    { id: 'section-longform', anchor: 'anchor-longform' },
+    { id: 'section-video', anchor: 'anchor-video' },
+    { id: 'section-newspaper', anchor: 'anchor-newspaper' }
+  ];
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const match = sections.find(s => s.id === entry.target.id);
+        if (match) setActiveAnchor(match.anchor);
+      }
+    });
+  }, { threshold: 0.2, rootMargin: '-10% 0px -60% 0px' });
+
+  sections.forEach(s => {
+    const el = document.getElementById(s.id);
+    if (el) obs.observe(el);
+  });
 }
 
 function showPage(id, el) {
