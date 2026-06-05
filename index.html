@@ -271,9 +271,9 @@
           <div class="section-header"><span class="section-label">Video</span></div>
           <div id="video-list"></div>
         </div>
-        <div class="section" id="section-newspaper">
-          <div class="section-header"><span class="section-label">Newspaper</span></div>
-          <ul class="article-list" id="newspaper-list"></ul>
+        <div class="section" id="section-news">
+          <div class="section-header"><span class="section-label">News</span></div>
+          <ul class="article-list" id="news-list"></ul>
         </div>
       </main>
     </div>
@@ -292,7 +292,7 @@
         <div id="all-video-list"></div>
       </div>
       <div class="section">
-        <div class="section-header"><span class="section-label">Newspaper</span></div>
+        <div class="section-header"><span class="section-label">News</span></div>
         <ul class="article-list" id="all-list"></ul>
       </div>
     </div>
@@ -323,7 +323,7 @@
 <div class="floating-pill" id="floating-pill">
   <button class="pill-btn active" id="pill-longform" onclick="scrollToSection('section-longform','pill-longform')">Longform</button>
   <button class="pill-btn" id="pill-video" onclick="scrollToSection('section-video','pill-video')">Video</button>
-  <button class="pill-btn" id="pill-newspaper" onclick="scrollToSection('section-newspaper','pill-newspaper')">Newspaper</button>
+  <button class="pill-btn" id="pill-news" onclick="scrollToSection('section-news','pill-news')">News</button>
 </div>
 
 <footer>
@@ -430,7 +430,7 @@ async function load() {
   // Anchor counts (se presenti)
   const cl = document.getElementById('count-longform');
   const cv = document.getElementById('count-video');
-  const cn = document.getElementById('count-newspaper');
+  const cn = document.getElementById('count-news');
   if (cl) cl.textContent = `${lfs.length} piece${lfs.length !== 1 ? 's' : ''}`;
   if (cv) cv.textContent = `${vids.length} video${vids.length !== 1 ? 's' : ''}`;
   if (cn) cn.textContent = `${arts.filter(a=>!a.pinned).length} article${arts.filter(a=>!a.pinned).length !== 1 ? 's' : ''}`;
@@ -443,13 +443,15 @@ async function load() {
   const pinnedHTML = [
     ...pinnedArts.map(articleHTML),
     ...pinnedVids.map(v=>`<li class="article-item"><a class="article-title" href="${v.url||'#'}" target="_blank">${v.title}</a>${v.context?`<p class="article-context">${v.context}</p>`:''}${formatDate(v.date)?`<span class="item-date">${formatDate(v.date)}</span>`:''}</li>`),
-    ...pinnedLfs.map(p=>`<li class="article-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')"><a class="article-title">${p.title}</a>${p.context?`<p class="article-context">${p.context}</p>`:p.sub?`<p class="article-context">${p.sub}</p>`:''}${formatDate(p.date)?`<span class="item-date">${formatDate(p.date)}</span>`:''}</li>`)
+    ...pinnedLfs.map(p=>`<li class="article-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')"><div style="display:flex;gap:1rem;align-items:flex-start;">${p.thumbnail_url?`<div class="pdf-icon"><img src="${p.thumbnail_url}" alt="${p.title}"></div>`:''}<div style="flex:1;"><a class="article-title">${p.title}</a>${p.context?`<p class="article-context">${p.context}</p>`:p.sub?`<p class="article-context">${p.sub}</p>`:''}${formatDate(p.date)?`<span class="item-date">${formatDate(p.date)}</span>`:''}</div></div></li>`)
   ].join('');
 
-  document.getElementById('pinned-list').innerHTML = pinnedHTML || '<li class="empty">Nessun contenuto pinnato.</li>';
+  const pinnedSection = document.querySelector('#pinned-list')?.closest('.section');
+  if (pinnedSection) pinnedSection.style.display = pinnedHTML ? 'block' : 'none';
+  document.getElementById('pinned-list').innerHTML = pinnedHTML || '';
 
-  // NEWSPAPER
-  document.getElementById('newspaper-list').innerHTML = arts.filter(a=>!a.pinned).map(articleHTML).join('') || '<li class="empty">Nessun articolo ancora.</li>';
+  // NEWS
+  document.getElementById('news-list').innerHTML = arts.filter(a=>!a.pinned).map(articleHTML).join('') || '<li class="empty">Nessun articolo ancora.</li>';
 
   // ALL PORTFOLIO
   document.getElementById('all-list').innerHTML = arts.map(articleHTML).join('') || '<li class="empty">Nessun articolo ancora.</li>';
@@ -550,7 +552,7 @@ function setPillActive(pillId) {
 }
 
 function setActiveAnchor(anchorId) {
-  const map = { 'anchor-longform': 'pill-longform', 'anchor-video': 'pill-video', 'anchor-newspaper': 'pill-newspaper' };
+  const map = { 'anchor-longform': 'pill-longform', 'anchor-video': 'pill-video', 'anchor-news': 'pill-news' };
   setPillActive(map[anchorId] || anchorId);
 }
 
@@ -558,7 +560,7 @@ function initObserver() {
   const sections = [
     { id: 'section-longform', anchor: 'anchor-longform', pill: 'pill-longform' },
     { id: 'section-video', anchor: 'anchor-video', pill: 'pill-video' },
-    { id: 'section-newspaper', anchor: 'anchor-newspaper', pill: 'pill-newspaper' }
+    { id: 'section-news', anchor: 'anchor-news', pill: 'pill-news' }
   ];
   const obs = new IntersectionObserver((entries) => {
     entries.forEach(entry => {

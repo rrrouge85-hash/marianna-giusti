@@ -72,16 +72,16 @@
   <div class="login-box">
     <h1 class="login-title">Admin</h1>
     <p class="login-sub">mariannagiusti.com</p>
-    <p class="login-error" id="login-error">Email o password errati.</p>
+    <p class="login-error" id="login-error">Wrong email or password.</p>
     <label>Email</label>
     <input type="text" id="email" placeholder="email@esempio.com" onkeydown="if(event.key==='Enter')doLogin()">
     <label>Password</label>
     <input type="password" id="pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
     <div style="margin-top:1rem;">
-      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="login-btn" onclick="doLogin()">Accedi</button>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="login-btn" onclick="doLogin()">Login</button>
     </div>
     <p style="margin-top:1rem;text-align:center;">
-      <a href="#" onclick="showForgot()" style="font-size:12px;color:var(--gray);text-decoration:underline;text-underline-offset:3px;">Ho dimenticato la password</a>
+      <a href="#" onclick="showForgot()" style="font-size:12px;color:var(--gray);text-decoration:underline;text-underline-offset:3px;">Forgot password</a>
     </p>
   </div>
 </div>
@@ -89,16 +89,16 @@
 <div class="login-wrap" id="forgot-screen" style="display:none;">
   <div class="login-box">
     <h1 class="login-title">Reset password</h1>
-    <p class="login-sub">Ti mandiamo un link via email.</p>
-    <p class="login-error" id="forgot-error">Email non trovata.</p>
-    <p id="forgot-ok" style="font-size:12px;color:#166534;background:#dcfce7;padding:10px 12px;border-radius:6px;margin-bottom:1rem;display:none;">Email inviata — controlla la tua casella.</p>
+    <p class="login-sub">We will send you a reset link by email.</p>
+    <p class="login-error" id="forgot-error">Email not found.</p>
+    <p id="forgot-ok" style="font-size:12px;color:#166534;background:#dcfce7;padding:10px 12px;border-radius:6px;margin-bottom:1rem;display:none;">Email sent — check your inbox.</p>
     <label>Email</label>
     <input type="text" id="reset-email" placeholder="email@esempio.com" onkeydown="if(event.key==='Enter')doReset()">
     <div style="margin-top:1rem;">
-      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="reset-btn" onclick="doReset()">Invia link</button>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" id="reset-btn" onclick="doReset()">Send link</button>
     </div>
     <p style="margin-top:1rem;text-align:center;">
-      <a href="#" onclick="showLogin()" style="font-size:12px;color:var(--gray);text-decoration:underline;text-underline-offset:3px;">← Torna al login</a>
+      <a href="#" onclick="showLogin()" style="font-size:12px;color:var(--gray);text-decoration:underline;text-underline-offset:3px;">← Back to login</a>
     </p>
   </div>
 </div>
@@ -107,8 +107,8 @@
   <div class="admin-nav">
     <span class="admin-nav-name">Marianna Giusti — Admin</span>
     <div class="admin-nav-right">
-      <a href="index.html" target="_blank" class="btn btn-ghost btn-sm">Vedi sito →</a>
-      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Esci</button>
+      <a href="index.html" target="_blank" class="btn btn-ghost btn-sm">View site →</a>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Logout</button>
     </div>
   </div>
   <div class="admin-tabs">
@@ -122,7 +122,7 @@
 
     <div id="tab-articoli" class="tab-panel active">
       <div class="add-form">
-        <p class="add-form-title">Aggiungi articolo</p>
+        <p class="add-form-title">Add article</p>
         <div class="row-3">
           <div><label>Tag</label>
             <select id="new-tag">
@@ -139,65 +139,65 @@
             </label>
           </div>
         </div>
-        <label>Titolo</label>
-        <input type="text" id="new-title" placeholder="Titolo dell'articolo">
+        <label>Title</label>
+        <input type="text" id="new-title" placeholder="Title dell'articolo">
         <label>Link FT</label>
         <input type="url" id="new-url" placeholder="https://www.ft.com/...">
-        <label>Contesto</label>
+        <label>Context</label>
         <textarea id="new-context" rows="2" placeholder="Due righe su perché conta questo pezzo..."></textarea>
         <div class="form-actions">
-          <button class="btn btn-primary" onclick="addArticle()">Aggiungi</button>
+          <button class="btn btn-primary" onclick="addArticle()">Add</button>
         </div>
       </div>
-      <p class="section-title">Articoli pubblicati</p>
-      <div id="admin-article-list"><p class="spinner">Caricamento...</p></div>
+      <p class="section-title">Published articles</p>
+      <div id="admin-article-list"><p class="spinner">Loading...</p></div>
     </div>
 
     <div id="tab-video" class="tab-panel">
       <div class="add-form">
-        <p class="add-form-title">Aggiungi video</p>
-        <label>Titolo</label><input type="text" id="new-vid-title" placeholder="Titolo del video">
+        <p class="add-form-title">Add video</p>
+        <label>Title</label><input type="text" id="new-vid-title" placeholder="Video title">
         <label>Tipo</label>
         <select id="new-vid-type" onchange="toggleEmbedField()">
           <option value="youtube">YouTube</option>
           <option value="vimeo">Vimeo</option>
           <option value="tiktok">TikTok</option>
           <option value="instagram">Instagram</option>
-          <option value="link">Link esterno (FT...)</option>
+          <option value="link">External link (FT...)</option>
         </select>
         <div id="embed-field" style="display:none;">
-          <label>Codice embed Instagram</label>
-          <textarea id="new-vid-embed" rows="3" placeholder="Incolla qui il codice embed da Instagram (tre puntini → Incorpora)"></textarea>
+          <label>Instagram embed code</label>
+          <textarea id="new-vid-embed" rows="3" placeholder="Paste the embed code from Instagram (three dots → Embed)"></textarea>
         </div>
         <div id="url-field">
           <label>URL</label><input type="url" id="new-vid-url" placeholder="https://...">
         </div>
-        <label>Contesto</label><textarea id="new-vid-context" rows="2" placeholder="Due righe descrittive..."></textarea>
+        <label>Context</label><textarea id="new-vid-context" rows="2" placeholder="Short description..."></textarea>
         <label>Data</label><input type="date" id="new-vid-date">
         <div style="display:flex;align-items:center;gap:6px;margin-top:10px;">
           <input type="checkbox" id="new-vid-pinned">
           <label style="margin:0;cursor:pointer;font-size:12px;color:var(--gray);">Pinned</label>
         </div>
-        <div class="form-actions"><button class="btn btn-primary" onclick="addVideo()">Aggiungi</button></div>
+        <div class="form-actions"><button class="btn btn-primary" onclick="addVideo()">Add</button></div>
       </div>
-      <p class="section-title">Video pubblicati</p>
-      <div id="admin-video-list"><p class="spinner">Caricamento...</p></div>
+      <p class="section-title">Published videos</p>
+      <div id="admin-video-list"><p class="spinner">Loading...</p></div>
     </div>
 
     <div id="tab-longform" class="tab-panel">
       <div class="add-form">
-        <p class="add-form-title">Aggiungi longform</p>
-        <label>Titolo</label><input type="text" id="new-lf-title" placeholder="Titolo del pezzo">
-        <label>Pubblicazione</label><input type="text" id="new-lf-sub" placeholder="FT Weekend Magazine">
-        <label>Copertina (immagine)</label>
+        <p class="add-form-title">Add longform</p>
+        <label>Title</label><input type="text" id="new-lf-title" placeholder="Piece title">
+        <label>Publication</label><input type="text" id="new-lf-sub" placeholder="FT Weekend Magazine">
+        <label>Cover image</label>
         <input type="file" id="new-lf-thumb-file" accept="image/*" style="font-size:12px;color:var(--gray);width:100%;padding:8px 0;">
-        <div id="lf-thumb-progress" style="display:none;font-size:12px;color:var(--gray);margin-top:4px;">Caricamento...</div>
-        <label>Contesto</label><textarea id="new-lf-context" rows="2" placeholder="Due righe descrittive..."></textarea>
+        <div id="lf-thumb-progress" style="display:none;font-size:12px;color:var(--gray);margin-top:4px;">Loading...</div>
+        <label>Context</label><textarea id="new-lf-context" rows="2" placeholder="Short description..."></textarea>
         <div style="margin-top:12px;">
-          <label style="margin-top:0;">Carica PDF</label>
+          <label style="margin-top:0;">Upload PDF</label>
           <input type="file" id="new-lf-file" accept=".pdf" style="font-size:12px;color:var(--gray);width:100%;padding:8px 0;">
-          <p style="font-size:11px;color:var(--gray);margin-top:4px;">oppure</p>
-          <label>URL esterno</label>
+          <p style="font-size:11px;color:var(--gray);margin-top:4px;">or</p>
+          <label>External URL</label>
           <input type="url" id="new-lf-url" placeholder="https://...">
         </div>
         <label>Data</label><input type="date" id="new-lf-date">
@@ -205,19 +205,19 @@
           <input type="checkbox" id="new-lf-pinned">
           <label style="margin:0;cursor:pointer;font-size:12px;color:var(--gray);">Pinned</label>
         </div>
-        <div id="lf-upload-progress" style="display:none;font-size:12px;color:var(--gray);margin-top:8px;">Caricamento...</div>
-        <div class="form-actions"><button class="btn btn-primary" onclick="addLongform()">Aggiungi</button></div>
+        <div id="lf-upload-progress" style="display:none;font-size:12px;color:var(--gray);margin-top:8px;">Loading...</div>
+        <div class="form-actions"><button class="btn btn-primary" onclick="addLongform()">Add</button></div>
       </div>
-      <p class="section-title">Longform pubblicati</p>
-      <div id="admin-longform-list"><p class="spinner">Caricamento...</p></div>
+      <p class="section-title">Published longform</p>
+      <div id="admin-longform-list"><p class="spinner">Loading...</p></div>
     </div>
 
     <div id="tab-bio" class="tab-panel">
       <div class="card">
-        <p class="card-label">Testo homepage</p>
+        <p class="card-label">Homepage text</p>
         <textarea id="admin-bio" rows="5" placeholder="Staff journalist at..."></textarea>
         <div class="form-actions" style="margin-top:1rem;">
-          <button class="btn btn-primary" onclick="saveBio()">Salva</button>
+          <button class="btn btn-primary" onclick="saveBio()">Save</button>
         </div>
       </div>
     </div>
@@ -272,7 +272,7 @@ async function doReset() {
     body: JSON.stringify({ email })
   });
 
-  btn.textContent = 'Invia link'; btn.disabled = false;
+  btn.textContent = 'Send link'; btn.disabled = false;
 
   if (r.ok) {
     document.getElementById('forgot-ok').style.display = 'block';
@@ -296,7 +296,7 @@ async function doLogin() {
   });
   const data = await r.json();
 
-  btn.textContent = 'Accedi'; btn.disabled = false;
+  btn.textContent = 'Login'; btn.disabled = false;
 
   if (data.access_token) {
     authToken = data.access_token;
@@ -332,10 +332,10 @@ async function addArticle() {
   await sbPost('articles',{title,tag:document.getElementById('new-tag').value,date:document.getElementById('new-date').value||null,context:document.getElementById('new-context').value,url:document.getElementById('new-url').value||'#',pinned:document.getElementById('new-pinned').checked,sort_order:999});
   ['new-title','new-context','new-url','new-date'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('new-pinned').checked=false;
-  await loadArticles(); toast('Articolo aggiunto ✓');
+  await loadArticles(); toast('Article added ✓');
 }
 
-async function togglePin(id,current) { await sbPatch('articles',id,{pinned:!current}); await loadArticles(); toast(!current?'Pinnato ✓':'Pin rimosso'); }
+async function togglePin(id,current) { await sbPatch('articles',id,{pinned:!current}); await loadArticles(); toast(!current?'Pinned ✓':'Unpinned'); }
 
 function toggleEdit(elId) { const el=document.getElementById(elId); el.style.display=el.style.display==='none'?'block':'none'; }
 
@@ -348,10 +348,10 @@ async function saveArticle(id) {
     url: document.getElementById('eu-'+id).value,
     context: document.getElementById('ec-'+id).value
   });
-  await loadArticles(); toast('Salvato ✓');
+  await loadArticles(); toast('Saveto ✓');
 }
 
-async function deleteArticle(id) { if(!confirm('Eliminare?'))return; await sbDelete('articles',id); await loadArticles(); toast('Eliminato'); }
+async function deleteArticle(id) { if(!confirm('Deletere?'))return; await sbDelete('articles',id); await loadArticles(); toast('Deleteto'); }
 
 function toggleEmbedField() {
   const type = document.getElementById('new-vid-type').value;
@@ -376,12 +376,12 @@ async function addVideo() {
   });
   ['new-vid-title','new-vid-url','new-vid-date','new-vid-context','new-vid-embed'].forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
   document.getElementById('new-vid-pinned').checked = false;
-  await loadVideos(); toast('Video aggiunto ✓');
+  await loadVideos(); toast('Video added ✓');
 }
 
-async function deleteVideo(id) { if(!confirm('Eliminare?'))return; await sbDelete('videos',id); await loadVideos(); toast('Eliminato'); }
+async function deleteVideo(id) { if(!confirm('Deletere?'))return; await sbDelete('videos',id); await loadVideos(); toast('Deleteto'); }
 
-async function toggleVidPin(id,current) { await sbPatch('videos',id,{pinned:!current}); await loadVideos(); toast(!current?'Pinnato ✓':'Pin rimosso'); }
+async function toggleVidPin(id,current) { await sbPatch('videos',id,{pinned:!current}); await loadVideos(); toast(!current?'Pinned ✓':'Unpinned'); }
 
 async function saveVideo(id) {
   await sbPatch('videos',id,{
@@ -392,7 +392,7 @@ async function saveVideo(id) {
     date: document.getElementById('vd-'+id).value || null,
     pinned: document.getElementById('vp-'+id).checked
   });
-  await loadVideos(); toast('Salvato ✓');
+  await loadVideos(); toast('Saveto ✓');
 }
 
 async function addLongform() {
@@ -405,7 +405,7 @@ async function addLongform() {
   if (file) {
     const progress = document.getElementById('lf-upload-progress');
     progress.style.display = 'block';
-    progress.textContent = 'Caricamento PDF...';
+    progress.textContent = 'Uploading PDF...';
 
     const filename = `${Date.now()}-${file.name.replace(/\s+/g,'-')}`;
     const uploadRes = await fetch(`${SB_URL}/storage/v1/object/marianna-giusti/pdfs/${filename}`, {
@@ -416,10 +416,10 @@ async function addLongform() {
 
     if (uploadRes.ok) {
       url = `${SB_URL}/storage/v1/object/public/marianna-giusti/pdfs/${filename}`;
-      progress.textContent = 'PDF caricato ✓';
+      progress.textContent = 'PDF uploaded ✓';
       setTimeout(() => { progress.style.display = 'none'; }, 2000);
     } else {
-      progress.textContent = 'Errore nel caricamento. Prova con URL esterno.';
+      progress.textContent = 'Upload error. Try an external URL.';
       return;
     }
   }
@@ -440,7 +440,7 @@ async function addLongform() {
   if (thumbFile) {
     const thumbProgress = document.getElementById('lf-thumb-progress');
     thumbProgress.style.display = 'block';
-    thumbProgress.textContent = 'Caricamento copertina...';
+    thumbProgress.textContent = 'Uploading cover...';
     const ext = thumbFile.name.split('.').pop();
     const thumbName = `${Date.now()}-cover.${ext}`;
     const thumbRes = await fetch(`${SB_URL}/storage/v1/object/marianna-giusti/covers/${thumbName}`, {
@@ -454,10 +454,10 @@ async function addLongform() {
       if (Array.isArray(latest) && latest[0]) {
         await sbPatch('longform', latest[0].id, { thumbnail_url: thumbUrl });
       }
-      thumbProgress.textContent = 'Copertina caricata ✓';
+      thumbProgress.textContent = 'Cover uploaded ✓';
       setTimeout(() => { thumbProgress.style.display = 'none'; }, 2000);
     } else {
-      document.getElementById('lf-thumb-progress').textContent = 'Errore caricamento copertina.';
+      document.getElementById('lf-thumb-progress').textContent = 'Cover upload error.';
     }
   }
 
@@ -466,12 +466,12 @@ async function addLongform() {
   document.getElementById('new-lf-thumb-file').value = '';
   document.getElementById('new-lf-context').value = '';
   document.getElementById('new-lf-pinned').checked = false;
-  await loadLongform(); toast('Longform aggiunto ✓');
+  await loadLongform(); toast('Longform added ✓');
 }
 
-async function deleteLongform(id) { if(!confirm('Eliminare?'))return; await sbDelete('longform',id); await loadLongform(); toast('Eliminato'); }
+async function deleteLongform(id) { if(!confirm('Deletere?'))return; await sbDelete('longform',id); await loadLongform(); toast('Deleteto'); }
 
-async function toggleLfPin(id,current) { await sbPatch('longform',id,{pinned:!current}); await loadLongform(); toast(!current?'Pinnato ✓':'Pin rimosso'); }
+async function toggleLfPin(id,current) { await sbPatch('longform',id,{pinned:!current}); await loadLongform(); toast(!current?'Pinned ✓':'Unpinned'); }
 
 async function saveLongform(id) {
   let thumbnailUrl = document.getElementById('lfth-'+id).value || null;
@@ -479,7 +479,7 @@ async function saveLongform(id) {
   const thumbFile = document.getElementById('lfth-file-'+id).files[0];
   if (thumbFile) {
     const prog = document.getElementById('lfth-prog-'+id);
-    prog.style.display = 'inline'; prog.textContent = 'Caricamento...';
+    prog.style.display = 'inline'; prog.textContent = 'Loading...';
     const ext = thumbFile.name.split('.').pop();
     const name = `${Date.now()}-cover.${ext}`;
     const res = await fetch(`${SB_URL}/storage/v1/object/marianna-giusti/covers/${name}`, {
@@ -502,7 +502,7 @@ async function saveLongform(id) {
     date: document.getElementById('lfd-'+id).value || null,
     pinned: document.getElementById('lfp-'+id).checked
   });
-  await loadLongform(); toast('Salvato ✓');
+  await loadLongform(); toast('Saveto ✓');
 }
 
 async function loadArticles() {
@@ -520,7 +520,7 @@ async function loadArticles() {
       <div class="item-actions">
         <button class="btn btn-ghost btn-sm" onclick="toggleEdit('edit-${x.id}')">Modifica</button>
         <button class="btn btn-ghost btn-sm" onclick="togglePin(${x.id},${x.pinned})">${x.pinned?'Unpin':'Pin'}</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteArticle(${x.id})">Elimina</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteArticle(${x.id})">Delete</button>
       </div>
       <div id="edit-${x.id}" class="edit-form" style="display:none;">
         <div class="row-3">
@@ -539,18 +539,18 @@ async function loadArticles() {
             </label>
           </div>
         </div>
-        <label>Titolo</label>
+        <label>Title</label>
         <input type="text" id="eti-${x.id}" value="${(x.title||'').replace(/"/g,'&quot;')}">
         <label>Link</label>
         <input type="url" id="eu-${x.id}" value="${x.url||''}">
-        <label>Contesto</label>
+        <label>Context</label>
         <textarea id="ec-${x.id}" rows="2">${x.context||''}</textarea>
         <div class="form-actions" style="margin-top:.75rem;">
-          <button class="btn btn-ghost btn-sm" onclick="toggleEdit('edit-${x.id}')">Annulla</button>
-          <button class="btn btn-primary btn-sm" onclick="saveArticle(${x.id})">Salva</button>
+          <button class="btn btn-ghost btn-sm" onclick="toggleEdit('edit-${x.id}')">Cancel</button>
+          <button class="btn btn-primary btn-sm" onclick="saveArticle(${x.id})">Save</button>
         </div>
       </div>
-    </div>`).join(''):'<p class="spinner">Nessun articolo ancora.</p>';
+    </div>`).join(''):'<p class="spinner">No articles yet.</p>';
 
   if (Array.isArray(a)) {
     a.forEach(x => {
@@ -574,16 +574,16 @@ async function loadVideos() {
       <div class="item-actions">
         <button class="btn btn-ghost btn-sm" onclick="toggleEdit('vedit-${x.id}')">Modifica</button>
         <button class="btn btn-ghost btn-sm" onclick="toggleVidPin(${x.id},${x.pinned})">${x.pinned?'Unpin':'Pin'}</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteVideo(${x.id})">Elimina</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteVideo(${x.id})">Delete</button>
       </div>
       <div id="vedit-${x.id}" class="edit-form" style="display:none;">
-        <label>Titolo</label>
+        <label>Title</label>
         <input type="text" id="vt-${x.id}" value="${(x.title||'').replace(/"/g,'&quot;')}">
         <label>URL</label>
         <input type="url" id="vu-${x.id}" value="${x.url||''}">
         <label>Embed code (Instagram)</label>
         <textarea id="ve-${x.id}" rows="2">${x.embed_code||''}</textarea>
-        <label>Contesto</label>
+        <label>Context</label>
         <textarea id="vc-${x.id}" rows="2">${x.context||''}</textarea>
         <label>Data</label>
         <input type="date" id="vd-${x.id}">
@@ -592,11 +592,11 @@ async function loadVideos() {
           <label style="margin:0;cursor:pointer;">Pinned</label>
         </div>
         <div class="form-actions" style="margin-top:.75rem;">
-          <button class="btn btn-ghost btn-sm" onclick="toggleEdit('vedit-${x.id}')">Annulla</button>
-          <button class="btn btn-primary btn-sm" onclick="saveVideo(${x.id})">Salva</button>
+          <button class="btn btn-ghost btn-sm" onclick="toggleEdit('vedit-${x.id}')">Cancel</button>
+          <button class="btn btn-primary btn-sm" onclick="saveVideo(${x.id})">Save</button>
         </div>
       </div>
-    </div>`).join(''):'<p class="spinner">Nessun video ancora.</p>';
+    </div>`).join(''):'<p class="spinner">No videos yet.</p>';
 
   if (Array.isArray(v)) {
     v.forEach(x => {
@@ -620,20 +620,20 @@ async function loadLongform() {
       <div class="item-actions">
         <button class="btn btn-ghost btn-sm" onclick="toggleEdit('lfedit-${x.id}')">Modifica</button>
         <button class="btn btn-ghost btn-sm" onclick="toggleLfPin(${x.id},${x.pinned})">${x.pinned?'Unpin':'Pin'}</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteLongform(${x.id})">Elimina</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteLongform(${x.id})">Delete</button>
       </div>
       <div id="lfedit-${x.id}" class="edit-form" style="display:none;">
-        <label>Titolo</label>
+        <label>Title</label>
         <input type="text" id="lft-${x.id}" value="${(x.title||'').replace(/"/g,'&quot;')}">
-        <label>Pubblicazione</label>
+        <label>Publication</label>
         <input type="text" id="lfs-${x.id}" value="${(x.sub||'').replace(/"/g,'&quot;')}">
-        <label>URL Thumbnail</label>
+        <label>Thumbnail URL</label>
         <input type="url" id="lfth-${x.id}" value="${x.thumbnail_url||''}" placeholder="https://...">
         <div style="margin-top:6px;">
           <input type="file" id="lfth-file-${x.id}" accept="image/*" style="font-size:11px;color:var(--gray);">
-          <span id="lfth-prog-${x.id}" style="font-size:11px;color:var(--gray);display:none;margin-left:8px;">Caricamento...</span>
+          <span id="lfth-prog-${x.id}" style="font-size:11px;color:var(--gray);display:none;margin-left:8px;">Loading...</span>
         </div>
-        <label>Contesto</label>
+        <label>Context</label>
         <textarea id="lfc-${x.id}" rows="2">${x.context||''}</textarea>
         <label>URL PDF</label>
         <input type="url" id="lfu-${x.id}" value="${x.url||''}">
@@ -644,11 +644,11 @@ async function loadLongform() {
           <label style="margin:0;cursor:pointer;">Pinned</label>
         </div>
         <div class="form-actions" style="margin-top:.75rem;">
-          <button class="btn btn-ghost btn-sm" onclick="toggleEdit('lfedit-${x.id}')">Annulla</button>
-          <button class="btn btn-primary btn-sm" onclick="saveLongform(${x.id})">Salva</button>
+          <button class="btn btn-ghost btn-sm" onclick="toggleEdit('lfedit-${x.id}')">Cancel</button>
+          <button class="btn btn-primary btn-sm" onclick="saveLongform(${x.id})">Save</button>
         </div>
       </div>
-    </div>`).join(''):'<p class="spinner">Nessun longform ancora.</p>';
+    </div>`).join(''):'<p class="spinner">No longform yet.</p>';
 
   if (Array.isArray(l)) {
     l.forEach(x => {
@@ -679,7 +679,7 @@ async function saveBio() {
   } else {
     await sbPost('settings', { key: 'bio', value });
   }
-  toast('Bio salvata ✓');
+  toast('Bio saved ✓');
 }
 </script>
 </body>
