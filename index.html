@@ -423,9 +423,9 @@ async function load() {
   const bioEl = document.getElementById('bio-text');
   if (bioEl) bioEl.textContent = bio;
 
-  const arts = Array.isArray(articles) ? articles : [];
-  const vids = Array.isArray(videos) ? videos : [];
-  const lfs = Array.isArray(longform) ? longform : [];
+  const arts = (Array.isArray(articles) ? articles : []).filter(a => a.published !== false);
+  const vids = (Array.isArray(videos) ? videos : []).filter(v => v.published !== false);
+  const lfs = (Array.isArray(longform) ? longform : []).filter(p => p.published !== false);
 
   // Anchor counts (se presenti)
   const cl = document.getElementById('count-longform');

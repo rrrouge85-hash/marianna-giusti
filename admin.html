@@ -54,6 +54,9 @@
   .year-text { font-size: 11px; color: var(--gray); }
   .pin-badge { font-size: 9px; background: var(--black); color: #fff; padding: 2px 6px; border-radius: 2px; }
   .item-actions { display: flex; gap: 6px; }
+  .btn-eye { background: none; border: none; cursor: pointer; padding: 5px; color: var(--gray); opacity: 0.4; transition: opacity 0.15s; }
+  .btn-eye.published { opacity: 1; color: var(--black); }
+  .btn-eye svg { width: 16px; height: 16px; display: block; }
   .edit-form { background: var(--bg); border: 0.5px solid var(--border); border-radius: 6px; padding: 1rem; margin-top: 10px; }
   .edit-form label { margin-top: 8px; }
   .edit-form label:first-child { margin-top: 0; }
@@ -336,6 +339,9 @@ async function addArticle() {
 }
 
 async function togglePin(id,current) { await sbPatch('articles',id,{pinned:!current}); await loadArticles(); toast(!current?'Pinned ✓':'Unpinned'); }
+async function togglePublish(id,current) { await sbPatch('articles',id,{published:!current}); await loadArticles(); toast(!current?'Visible':'Hidden'); }
+async function toggleVidPublish(id,current) { await sbPatch('videos',id,{published:!current}); await loadVideos(); toast(!current?'Visible':'Hidden'); }
+async function toggleLfPublish(id,current) { await sbPatch('longform',id,{published:!current}); await loadLongform(); toast(!current?'Visible':'Hidden'); }
 
 function toggleEdit(elId) { const el=document.getElementById(elId); el.style.display=el.style.display==='none'?'block':'none'; }
 
@@ -348,10 +354,10 @@ async function saveArticle(id) {
     url: document.getElementById('eu-'+id).value,
     context: document.getElementById('ec-'+id).value
   });
-  await loadArticles(); toast('Saveto ✓');
+  await loadArticles(); toast('Saved ✓');
 }
 
-async function deleteArticle(id) { if(!confirm('Deletere?'))return; await sbDelete('articles',id); await loadArticles(); toast('Deleteto'); }
+async function deleteArticle(id) { if(!confirm('Delete?'))return; await sbDelete('articles',id); await loadArticles(); toast('Deleted'); }
 
 function toggleEmbedField() {
   const type = document.getElementById('new-vid-type').value;
@@ -379,7 +385,7 @@ async function addVideo() {
   await loadVideos(); toast('Video added ✓');
 }
 
-async function deleteVideo(id) { if(!confirm('Deletere?'))return; await sbDelete('videos',id); await loadVideos(); toast('Deleteto'); }
+async function deleteVideo(id) { if(!confirm('Delete?'))return; await sbDelete('videos',id); await loadVideos(); toast('Deleted'); }
 
 async function toggleVidPin(id,current) { await sbPatch('videos',id,{pinned:!current}); await loadVideos(); toast(!current?'Pinned ✓':'Unpinned'); }
 
@@ -392,7 +398,7 @@ async function saveVideo(id) {
     date: document.getElementById('vd-'+id).value || null,
     pinned: document.getElementById('vp-'+id).checked
   });
-  await loadVideos(); toast('Saveto ✓');
+  await loadVideos(); toast('Saved ✓');
 }
 
 async function addLongform() {
@@ -469,7 +475,7 @@ async function addLongform() {
   await loadLongform(); toast('Longform added ✓');
 }
 
-async function deleteLongform(id) { if(!confirm('Deletere?'))return; await sbDelete('longform',id); await loadLongform(); toast('Deleteto'); }
+async function deleteLongform(id) { if(!confirm('Delete?'))return; await sbDelete('longform',id); await loadLongform(); toast('Deleted'); }
 
 async function toggleLfPin(id,current) { await sbPatch('longform',id,{pinned:!current}); await loadLongform(); toast(!current?'Pinned ✓':'Unpinned'); }
 
@@ -502,13 +508,13 @@ async function saveLongform(id) {
     date: document.getElementById('lfd-'+id).value || null,
     pinned: document.getElementById('lfp-'+id).checked
   });
-  await loadLongform(); toast('Saveto ✓');
+  await loadLongform(); toast('Saved ✓');
 }
 
 async function loadArticles() {
   const a=await sbGet('articles','order=pinned.desc,date.desc');
   document.getElementById('admin-article-list').innerHTML=Array.isArray(a)&&a.length?a.map(x=>`
-    <div class="admin-item">
+    <div class="admin-item" style="${x.published===false?'opacity:0.4;':''}">
       <div class="admin-item-info">
         <p class="admin-item-title">${x.title}</p>
         <div class="admin-item-meta">
@@ -518,7 +524,13 @@ async function loadArticles() {
         </div>
       </div>
       <div class="item-actions">
-        <button class="btn btn-ghost btn-sm" onclick="toggleEdit('edit-${x.id}')">Modifica</button>
+        <button class="btn-eye ${x.published!==false?'published':''}" onclick="togglePublish(${x.id},${x.published!==false})" title="${x.published!==false?'Hide':'Show'}">
+          ${x.published!==false
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22"/></svg>'
+          }
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleEdit('edit-${x.id}')">Edit</button>
         <button class="btn btn-ghost btn-sm" onclick="togglePin(${x.id},${x.pinned})">${x.pinned?'Unpin':'Pin'}</button>
         <button class="btn btn-danger btn-sm" onclick="deleteArticle(${x.id})">Delete</button>
       </div>
@@ -563,7 +575,7 @@ async function loadArticles() {
 async function loadVideos() {
   const v=await sbGet('videos','order=date.desc');
   document.getElementById('admin-video-list').innerHTML=Array.isArray(v)&&v.length?v.map(x=>`
-    <div class="admin-item">
+    <div class="admin-item" style="${x.published===false?'opacity:0.4;':''}">
       <div class="admin-item-info">
         <p class="admin-item-title">${x.title}</p>
         <div class="admin-item-meta">
@@ -572,7 +584,13 @@ async function loadVideos() {
         </div>
       </div>
       <div class="item-actions">
-        <button class="btn btn-ghost btn-sm" onclick="toggleEdit('vedit-${x.id}')">Modifica</button>
+        <button class="btn-eye ${x.published!==false?'published':''}" onclick="toggleVidPublish(${x.id},${x.published!==false})" title="${x.published!==false?'Hide':'Show'}">
+          ${x.published!==false
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22"/></svg>'
+          }
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleEdit('vedit-${x.id}')">Edit</button>
         <button class="btn btn-ghost btn-sm" onclick="toggleVidPin(${x.id},${x.pinned})">${x.pinned?'Unpin':'Pin'}</button>
         <button class="btn btn-danger btn-sm" onclick="deleteVideo(${x.id})">Delete</button>
       </div>
@@ -609,7 +627,7 @@ async function loadVideos() {
 async function loadLongform() {
   const l=await sbGet('longform','order=date.desc');
   document.getElementById('admin-longform-list').innerHTML=Array.isArray(l)&&l.length?l.map(x=>`
-    <div class="admin-item">
+    <div class="admin-item" style="${x.published===false?'opacity:0.4;':''}">
       <div class="admin-item-info">
         <p class="admin-item-title">${x.title}</p>
         <div class="admin-item-meta">
@@ -618,7 +636,13 @@ async function loadLongform() {
         </div>
       </div>
       <div class="item-actions">
-        <button class="btn btn-ghost btn-sm" onclick="toggleEdit('lfedit-${x.id}')">Modifica</button>
+        <button class="btn-eye ${x.published!==false?'published':''}" onclick="toggleLfPublish(${x.id},${x.published!==false})" title="${x.published!==false?'Hide':'Show'}">
+          ${x.published!==false
+            ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22"/></svg>'
+          }
+        </button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleEdit('lfedit-${x.id}')">Edit</button>
         <button class="btn btn-ghost btn-sm" onclick="toggleLfPin(${x.id},${x.pinned})">${x.pinned?'Unpin':'Pin'}</button>
         <button class="btn btn-danger btn-sm" onclick="deleteLongform(${x.id})">Delete</button>
       </div>
