@@ -467,7 +467,7 @@ async function load() {
   const pinnedHTML = [
     ...pinnedArts.map(articleHTML),
     ...pinnedVids.map(v=>`<li class="article-item"><a class="article-title" href="${v.url||'#'}" target="_blank">${v.title}</a>${v.context?`<p class="article-context">${v.context}</p>`:''}${formatDate(v.date)?`<span class="item-date">${formatDate(v.date)}</span>`:''}</li>`),
-    ...pinnedLfs.map(p=>`<li class="article-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')"><div style="display:flex;gap:1rem;align-items:flex-start;">${p.thumbnail_url?`<div class="pdf-icon"><img src="${p.thumbnail_url}" alt="${p.title}"></div>`:''}<div style="flex:1;"><a class="article-title">${p.title}</a>${p.context?`<p class="article-context">${p.context}</p>`:p.sub?`<p class="article-context">${p.sub}</p>`:''}${formatDate(p.date)?`<span class="item-date">${formatDate(p.date)}</span>`:''}</div></div></li>`)
+    ...pinnedLfs.map(p=>`<li class="article-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')"><div style="display:flex;gap:1rem;align-items:flex-start;">${p.thumbnail_url&&p.thumbnail_url.trim()?`<div class="pdf-icon"><img src="${p.thumbnail_url}" alt="${p.title}"></div>`:''}<div style="flex:1;"><a class="article-title">${p.title}</a>${p.context?`<p class="article-context">${p.context}</p>`:p.sub?`<p class="article-context">${p.sub}</p>`:''}${formatDate(p.date)?`<span class="item-date">${formatDate(p.date)}</span>`:''}</div></div></li>`)
   ].join('');
 
   const pinnedSection = document.querySelector('#pinned-list')?.closest('.section');
@@ -531,7 +531,7 @@ async function load() {
   function longformHTML(p) {
     const ctx = p.context ? `<p class="pdf-sub">${p.context}</p>` : (p.sub ? `<p class="pdf-sub">${p.sub}</p>` : '');
     const date = formatDate(p.date) ? `<span class="item-date">${formatDate(p.date)}</span>` : '';
-    const thumb = p.thumbnail_url ? `<div class="pdf-icon"><img src="${p.thumbnail_url}" alt="${p.title}"></div>` : '';
+    const thumb = p.thumbnail_url && p.thumbnail_url.trim() ? `<div class="pdf-icon"><img src="${p.thumbnail_url}" alt="${p.title}"></div>` : '';
     return `<div class="pdf-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')">
       ${thumb}
       <div style="flex:1;">
