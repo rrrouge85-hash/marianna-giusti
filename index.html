@@ -374,6 +374,10 @@ function articleHTML(a) {
 
 function openPDF(url, title) {
   if (!url || url === '#') return;
+  if (window.innerWidth <= 768) {
+    window.open(url, '_blank');
+    return;
+  }
   document.getElementById('pdf-iframe').src = url;
   document.getElementById('pdf-modal-title').textContent = title;
   document.getElementById('pdf-overlay').classList.add('open');
