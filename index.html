@@ -179,7 +179,8 @@
     .tab-bar a svg { width: 18px; height: 18px; }
 
     .contact-wrap { padding: 2rem 0 6rem; }
-    .pdf-modal { width: 100vw; height: 100vh; border-radius: 0; }
+    .pdf-modal { width: 100vw; height: 100dvh; border-radius: 0; }
+    .pdf-modal iframe { -webkit-overflow-scrolling: touch; }
     .anchor-block { display: none; }
   }
 
@@ -372,6 +373,7 @@ function articleHTML(a) {
 }
 
 function openPDF(url, title) {
+  if (!url || url === '#') return;
   document.getElementById('pdf-iframe').src = url;
   document.getElementById('pdf-modal-title').textContent = title;
   document.getElementById('pdf-overlay').classList.add('open');
@@ -386,6 +388,28 @@ function closePDFBtn() {
 
 function closePDF(e) {
   if (e.target === document.getElementById('pdf-overlay')) closePDFBtn();
+}
+
+// ESC key closes PDF
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePDFBtn(); });
+
+// Pill: on mobile show only after scrolling past the sidebar/bio
+function initPillScroll() {
+  const isMobile = window.innerWidth <= 768;
+  if (!isMobile) return; // desktop: pill always visible, handled by showPage
+  const pill = document.getElementById('floating-pill');
+  const sidebar = document.querySelector('.sidebar');
+  if (!sidebar || !pill) return;
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) {
+        pill.classList.add('visible');
+      } else {
+        pill.classList.remove('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+  obs.observe(sidebar);
 }
 
 function extractId(url, type) {
@@ -532,7 +556,10 @@ async function load() {
   document.getElementById('longform-list').innerHTML = lfs.filter(p=>!p.pinned).map(longformHTML).join('') || '<p class="empty">Nessun longform ancora.</p>';
 
   initObserver();
-  document.getElementById('floating-pill').classList.add('visible');
+  initPillScroll();
+  if (window.innerWidth > 768) {
+    document.getElementById('floating-pill').classList.add('visible');
+  }
 }
 
 function toggleMenu() {
