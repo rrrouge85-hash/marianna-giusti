@@ -68,6 +68,10 @@
   .tag-exclusive { background: #fce7f3; color: #9d174d; }
   .tag-column { background: #f3f4f6; color: #374151; }
   .tag-analysis { background: #ede9fe; color: #5b21b6; }
+  .tag-magazine-cover { background: #fef3c7; color: #92400e; }
+  .tag-dispatch { background: #e0f2fe; color: #0369a1; }
+  .tag-profile { background: #fce7f3; color: #9d174d; }
+  .tag-feature { background: #dcfce7; color: #166534; }
   .article-title { font-family: 'EB Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.2; color: var(--black); flex: 1; transition: opacity 0.15s; }
   .article-title:hover { opacity: 0.7; }
   .item-date { font-size: 11px; color: var(--lighter-gray); font-weight: 300; margin-top: 6px; display: block; }
@@ -344,8 +348,8 @@
 const SB_URL = 'https://uapkjifuwudofxxnntdm.supabase.co';
 const SB_KEY = 'sb_publishable_aGRROJn72rZJWamher3uIg_qdWwhq8a';
 const HEADERS = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY };
-const TAG_LABELS = { scoop:'Scoop', front:'Front page', magazine:'Magazine', exclusive:'Exclusive', column:'Column', analysis:'Analysis' };
-const TAG_CLS = { scoop:'tag-scoop', front:'tag-front', magazine:'tag-magazine', exclusive:'tag-exclusive', column:'tag-column', analysis:'tag-analysis' };
+const TAG_LABELS = { scoop:'Scoop', front:'Front page', magazine:'Magazine', exclusive:'Exclusive', column:'Column', analysis:'Analysis', 'magazine-cover':'Magazine Cover', dispatch:'Dispatch', profile:'Profile', feature:'Feature' };
+const TAG_CLS = { scoop:'tag-scoop', front:'tag-front', magazine:'tag-magazine', exclusive:'tag-exclusive', column:'tag-column', analysis:'tag-analysis', 'magazine-cover':'tag-magazine-cover', dispatch:'tag-dispatch', profile:'tag-profile', feature:'tag-feature' };
 
 async function get(table, params) {
   const r = await fetch(`${SB_URL}/rest/v1/${table}?${params}`, { headers: HEADERS });
@@ -475,7 +479,7 @@ async function load() {
   const pinnedHTML = [
     ...pinnedArts.map(articleHTML),
     ...pinnedVids.map(v=>`<li class="article-item"><a class="article-title" href="${v.url||'#'}" target="_blank">${v.title}</a>${v.context?`<p class="article-context">${v.context}</p>`:''}${formatDate(v.date)?`<span class="item-date">${formatDate(v.date)}</span>`:''}</li>`),
-    ...pinnedLfs.map(p=>`<li class="article-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')"><div style="display:flex;gap:1rem;align-items:flex-start;">${p.thumbnail_url&&p.thumbnail_url.trim()?`<div class="pdf-icon"><img src="${p.thumbnail_url}" alt="${p.title}"></div>`:''}<div style="flex:1;"><a class="article-title">${p.title}</a>${p.context?`<p class="article-context">${p.context}</p>`:p.sub?`<p class="article-context">${p.sub}</p>`:''}${formatDate(p.date)?`<span class="item-date">${formatDate(p.date)}</span>`:''}</div></div></li>`)
+    ...pinnedLfs.map(p=>`<li class="article-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')"><div style="display:flex;gap:1rem;align-items:flex-start;">${p.thumbnail_url&&p.thumbnail_url.trim()?`<div class="pdf-icon"><img src="${p.thumbnail_url}" alt="${p.title}"></div>`:''}<div style="flex:1;">${p.tag&&TAG_LABELS[p.tag]?`<span class="article-tag ${TAG_CLS[p.tag]||'tag-magazine'}" style="margin-bottom:6px;display:inline-block;">${TAG_LABELS[p.tag]}</span><br>`:''}<a class="article-title">${p.title}</a>${p.context?`<p class="article-context">${p.context}</p>`:p.sub?`<p class="article-context">${p.sub}</p>`:''}${formatDate(p.date)?`<span class="item-date">${formatDate(p.date)}</span>`:''}</div></div></li>`)
   ].join('');
 
   const pinnedSection = document.querySelector('#pinned-list')?.closest('.section');
@@ -541,7 +545,7 @@ async function load() {
   function longformHTML(p) {
     const ctx = p.context ? `<p class="pdf-sub">${p.context}</p>` : (p.sub ? `<p class="pdf-sub">${p.sub}</p>` : '');
     const date = formatDate(p.date) ? `<span class="item-date">${formatDate(p.date)}</span>` : '';
-    const tag = p.tag && LF_TAG_LABELS[p.tag] ? `<span class="article-tag tag-magazine" style="margin-bottom:6px;display:inline-block;">${LF_TAG_LABELS[p.tag]}</span><br>` : '';
+    const tag = p.tag && TAG_LABELS[p.tag] ? `<span class="article-tag ${TAG_CLS[p.tag]||'tag-magazine'}" style="margin-bottom:6px;display:inline-block;">${TAG_LABELS[p.tag]}</span><br>` : '';
     const thumb = p.thumbnail_url && p.thumbnail_url.trim() ? `<div class="pdf-icon"><img src="${p.thumbnail_url}" alt="${p.title}"></div>` : '';
     return `<div class="pdf-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')">
       ${thumb}
