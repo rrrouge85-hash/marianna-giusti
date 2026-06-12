@@ -292,15 +292,15 @@
 <div id="page-portfolio" class="page">
   <div class="container">
     <div style="padding:3rem 0 6rem;">
-      <div class="section">
+      <div class="section" id="section-longform-p">
         <div class="section-header"><span class="section-label">Longform</span></div>
         <div id="all-longform-list"></div>
       </div>
-      <div class="section">
+      <div class="section" id="section-video-p">
         <div class="section-header"><span class="section-label">Video</span></div>
         <div id="all-video-list"></div>
       </div>
-      <div class="section">
+      <div class="section" id="section-news-p">
         <div class="section-header"><span class="section-label">News</span></div>
         <ul class="article-list" id="all-list"></ul>
       </div>
@@ -582,10 +582,11 @@ function toggleMenu() {
   document.getElementById('menu-overlay').classList.toggle('open');
 }
 
-function scrollToSection(sectionId, pillId) {
-  const el = document.getElementById(sectionId);
+function scrollToSection(baseSectionId, pillId) {
+  // Try home section first, then portfolio
+  const el = document.getElementById(baseSectionId) || document.getElementById(baseSectionId + '-p');
   if (el) {
-    const offset = 80; // nav height + pill height + margin
+    const offset = 120;
     const top = el.getBoundingClientRect().top + window.scrollY - offset;
     window.scrollTo({ top, behavior: 'smooth' });
   }
@@ -612,24 +613,33 @@ function initObserver() {
   const sections = [
     { id: 'section-longform', pill: 'pill-longform' },
     { id: 'section-video', pill: 'pill-video' },
-    { id: 'section-news', pill: 'pill-news' }
+    { id: 'section-news', pill: 'pill-news' },
+    { id: 'section-longform-p', pill: 'pill-longform' },
+    { id: 'section-video-p', pill: 'pill-video' },
+    { id: 'section-news-p', pill: 'pill-news' }
   ];
 
   function updateActive() {
     const scrollY = window.scrollY;
-    const offset = 120; // nav + pill height
+    const offset = 120;
     let current = null;
 
     sections.forEach(s => {
       const el = document.getElementById(s.id);
       if (!el) return;
-      const top = el.getBoundingClientRect().top + scrollY - offset;
+      const rect = el.getBoundingClientRect();
+      if (!rect.width && !rect.height) return; // hidden element
+      const top = rect.top + scrollY - offset;
       if (scrollY >= top) current = s.pill;
     });
 
-    // If scrolled above all sections, deactivate
-    const firstEl = document.getElementById(sections[0].id);
-    if (firstEl) {
+    // Deactivate if above first visible section
+    const firstVisible = sections.find(s => {
+      const el = document.getElementById(s.id);
+      return el && (el.getBoundingClientRect().width || el.getBoundingClientRect().height);
+    });
+    if (firstVisible) {
+      const firstEl = document.getElementById(firstVisible.id);
       const firstTop = firstEl.getBoundingClientRect().top + scrollY - offset;
       if (scrollY < firstTop) current = null;
     }
@@ -638,7 +648,6 @@ function initObserver() {
   }
 
   window.addEventListener('scroll', updateActive, { passive: true });
-  updateActive(); // run once on load but will be null since at top
 }
 
 function showPage(id, el) {
@@ -647,7 +656,7 @@ function showPage(id, el) {
   document.getElementById('page-'+id).classList.add('active');
   if (el) el.classList.add('active');
   const pill = document.getElementById('floating-pill');
-  if (pill) pill.classList.toggle('visible', id === 'home');
+  if (pill) pill.classList.toggle('visible', id === 'home' || id === 'portfolio');
   window.scrollTo(0,0);
 }
 
