@@ -326,7 +326,7 @@
 </div>
 
 <div class="floating-pill" id="floating-pill">
-  <button class="pill-btn active" id="pill-longform" onclick="scrollToSection('section-longform','pill-longform')">Longform</button>
+  <button class="pill-btn" id="pill-longform" onclick="scrollToSection('section-longform','pill-longform')">Longform</button>
   <button class="pill-btn" id="pill-video" onclick="scrollToSection('section-video','pill-video')">Video</button>
   <button class="pill-btn" id="pill-news" onclick="scrollToSection('section-news','pill-news')">News</button>
 </div>
@@ -590,14 +590,12 @@ function scrollToSection(sectionId, pillId) {
 
 function setPillActive(pillId) {
   document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+  if (!pillId) return;
   const el = document.getElementById(pillId);
   if (el) el.classList.add('active');
-
-  // highlight matching section label
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
   const map = { 'pill-longform': 'section-longform', 'pill-video': 'section-video', 'pill-news': 'section-news' };
-  const sectionId = map[pillId] || pillId.replace('pill-', 'section-');
-  const section = document.getElementById(sectionId);
+  const section = document.getElementById(map[pillId]);
   if (section) section.classList.add('active-section');
 }
 
