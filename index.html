@@ -583,8 +583,10 @@ function toggleMenu() {
 }
 
 function scrollToSection(baseSectionId, pillId) {
-  // Try home section first, then portfolio
-  const el = document.getElementById(baseSectionId) || document.getElementById(baseSectionId + '-p');
+  const activePage = document.querySelector('.page.active');
+  const isPortfolio = activePage && activePage.id === 'page-portfolio';
+  const sectionId = isPortfolio ? baseSectionId + '-p' : baseSectionId;
+  const el = document.getElementById(sectionId);
   if (el) {
     const offset = 120;
     const top = el.getBoundingClientRect().top + window.scrollY - offset;
