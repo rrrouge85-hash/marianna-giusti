@@ -56,6 +56,7 @@
   .section { margin-bottom: 3rem; }
   .section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
   .section-label { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--gray); }
+  .section.active-section .section-label { color: var(--black); }
   .article-list { list-style: none; }
   .article-item { padding: 1.1rem 0; border-bottom: 0.5px solid var(--border); }
   .article-item:first-child { border-top: 0.5px solid var(--border); }
@@ -217,8 +218,8 @@
     white-space: nowrap;
   }
   .pill-btn:last-child { border-right: none; }
-  .pill-btn:hover { color: var(--black); background: var(--light-gray); }
-  .pill-btn.active { color: var(--black); background: var(--light-gray); }
+  .pill-btn:hover { color: var(--white); background: var(--black); }
+  .pill-btn.active { color: var(--white); background: var(--black); }
 </style>
 </head>
 <body>
@@ -255,8 +256,8 @@
           <div class="hero-links">
             <a href="https://x.com/mauipippa" target="_blank">↗ X</a>
             <a href="https://www.linkedin.com/in/marianna-giusti-466b91a9/" target="_blank">↗ LinkedIn</a>
+            <a href="https://www.ft.com/marianna-giusti" target="_blank">↗ See all my recent FT stories</a>
             <a href="mailto:giustimarianna7@gmail.com">↗ Email</a>
-            <a href="mailto:philip@greyhoundliterary.co.uk">↗ Literary representation: Philip Gwyn Jones</a>
           </div>
         </div>
       </aside>
@@ -309,8 +310,8 @@
     <p class="contact-bio">For story tips, press enquiries or speaking engagements.</p>
     <a href="https://x.com/mauipippa" target="_blank" class="contact-item"><span>↗ @mauipippa</span></a>
     <a href="https://www.linkedin.com/in/marianna-giusti-466b91a9/" target="_blank" class="contact-item"><span>↗ LinkedIn</span></a>
-    <a href="https://www.ft.com/marianna-giusti" target="_blank" class="contact-item"><span>↗ See all my recent FT stories</span></a>
     <a href="mailto:giustimarianna7@gmail.com" class="contact-item"><span>↗ Email</span></a>
+    <a href="mailto:philip@greyhoundliterary.co.uk" class="contact-item"><span>↗ Literary representation: Philip Gwyn Jones</span></a>
   </div>
 </div>
 
@@ -579,7 +580,11 @@ function toggleMenu() {
 
 function scrollToSection(sectionId, pillId) {
   const el = document.getElementById(sectionId);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (el) {
+    const offset = 80; // nav height + pill height + margin
+    const top = el.getBoundingClientRect().top + window.scrollY - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
   setPillActive(pillId);
 }
 
@@ -587,6 +592,13 @@ function setPillActive(pillId) {
   document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
   const el = document.getElementById(pillId);
   if (el) el.classList.add('active');
+
+  // highlight matching section label
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+  const map = { 'pill-longform': 'section-longform', 'pill-video': 'section-video', 'pill-news': 'section-news' };
+  const sectionId = map[pillId] || pillId.replace('pill-', 'section-');
+  const section = document.getElementById(sectionId);
+  if (section) section.classList.add('active-section');
 }
 
 function setActiveAnchor(anchorId) {
@@ -596,9 +608,9 @@ function setActiveAnchor(anchorId) {
 
 function initObserver() {
   const sections = [
-    { id: 'section-longform', anchor: 'anchor-longform', pill: 'pill-longform' },
-    { id: 'section-video', anchor: 'anchor-video', pill: 'pill-video' },
-    { id: 'section-news', anchor: 'anchor-news', pill: 'pill-news' }
+    { id: 'section-longform', pill: 'pill-longform' },
+    { id: 'section-video', pill: 'pill-video' },
+    { id: 'section-news', pill: 'pill-news' }
   ];
   const obs = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -607,7 +619,7 @@ function initObserver() {
         if (match) setPillActive(match.pill);
       }
     });
-  }, { threshold: 0.2, rootMargin: '-10% 0px -60% 0px' });
+  }, { threshold: 0.15, rootMargin: '-80px 0px -50% 0px' });
 
   sections.forEach(s => {
     const el = document.getElementById(s.id);
