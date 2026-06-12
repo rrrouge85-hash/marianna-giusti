@@ -614,19 +614,31 @@ function initObserver() {
     { id: 'section-video', pill: 'pill-video' },
     { id: 'section-news', pill: 'pill-news' }
   ];
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const match = sections.find(s => s.id === entry.target.id);
-        if (match) setPillActive(match.pill);
-      }
-    });
-  }, { threshold: 0.15, rootMargin: '-80px 0px -50% 0px' });
 
-  sections.forEach(s => {
-    const el = document.getElementById(s.id);
-    if (el) obs.observe(el);
-  });
+  function updateActive() {
+    const scrollY = window.scrollY;
+    const offset = 120; // nav + pill height
+    let current = null;
+
+    sections.forEach(s => {
+      const el = document.getElementById(s.id);
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + scrollY - offset;
+      if (scrollY >= top) current = s.pill;
+    });
+
+    // If scrolled above all sections, deactivate
+    const firstEl = document.getElementById(sections[0].id);
+    if (firstEl) {
+      const firstTop = firstEl.getBoundingClientRect().top + scrollY - offset;
+      if (scrollY < firstTop) current = null;
+    }
+
+    setPillActive(current);
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive(); // run once on load but will be null since at top
 }
 
 function showPage(id, el) {
