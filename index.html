@@ -55,7 +55,7 @@
   .main-content { padding: 3rem 0 3rem 3rem; }
   .section { margin-bottom: 3rem; }
   .section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 1rem; }
-  .section-label { font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: var(--lighter-gray); }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--gray); }
   .article-list { list-style: none; }
   .article-item { padding: 1.1rem 0; border-bottom: 0.5px solid var(--border); }
   .article-item:first-child { border-top: 0.5px solid var(--border); }
@@ -65,6 +65,8 @@
   .tag-front { background: #dcfce7; color: #166534; }
   .tag-magazine { background: #fef3c7; color: #92400e; }
   .tag-exclusive { background: #fce7f3; color: #9d174d; }
+  .tag-column { background: #f3f4f6; color: #374151; }
+  .tag-analysis { background: #ede9fe; color: #5b21b6; }
   .article-title { font-family: 'EB Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.2; color: var(--black); flex: 1; transition: opacity 0.15s; }
   .article-title:hover { opacity: 0.7; }
   .item-date { font-size: 11px; color: var(--lighter-gray); font-weight: 300; margin-top: 6px; display: block; }
@@ -148,7 +150,7 @@
     .section { margin-bottom: 2rem; }
 
     footer { display: flex; padding: 1rem 1.25rem; margin-bottom: 0; }
-    .floating-pill { bottom: 5rem; right: 1.25rem; }
+    .floating-pill { top: 56px; left: 50%; transform: translateX(-50%); bottom: auto; right: auto; }
 
     .tab-bar {
       display: flex;
@@ -186,8 +188,9 @@
 
   .floating-pill {
     position: fixed;
-    bottom: 5rem;
-    right: 2rem;
+    top: 56px;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 150;
     display: none;
     align-items: center;
@@ -195,17 +198,17 @@
     border: 0.5px solid var(--border);
     border-radius: 100px;
     overflow: hidden;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.1);
   }
   .floating-pill.visible { display: flex; }
   .pill-btn {
     font-family: 'Space Mono', monospace;
     font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--gray);
-    padding: 9px 16px;
+    padding: 12px 22px;
     cursor: pointer;
     background: none;
     border: none;
@@ -252,8 +255,8 @@
           <div class="hero-links">
             <a href="https://x.com/mauipippa" target="_blank">↗ X</a>
             <a href="https://www.linkedin.com/in/marianna-giusti-466b91a9/" target="_blank">↗ LinkedIn</a>
-            <a href="https://www.ft.com/marianna-giusti" target="_blank">↗ See all my recent FT stories</a>
             <a href="mailto:giustimarianna7@gmail.com">↗ Email</a>
+            <a href="mailto:philip@greyhoundliterary.co.uk">↗ Literary representation: Philip Gwyn Jones</a>
           </div>
         </div>
       </aside>
@@ -340,8 +343,8 @@
 const SB_URL = 'https://uapkjifuwudofxxnntdm.supabase.co';
 const SB_KEY = 'sb_publishable_aGRROJn72rZJWamher3uIg_qdWwhq8a';
 const HEADERS = { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY };
-const TAG_LABELS = { scoop:'Scoop', front:'Front page', magazine:'Magazine', exclusive:'Exclusive' };
-const TAG_CLS = { scoop:'tag-scoop', front:'tag-front', magazine:'tag-magazine', exclusive:'tag-exclusive' };
+const TAG_LABELS = { scoop:'Scoop', front:'Front page', magazine:'Magazine', exclusive:'Exclusive', column:'Column', analysis:'Analysis' };
+const TAG_CLS = { scoop:'tag-scoop', front:'tag-front', magazine:'tag-magazine', exclusive:'tag-exclusive', column:'tag-column', analysis:'tag-analysis' };
 
 async function get(table, params) {
   const r = await fetch(`${SB_URL}/rest/v1/${table}?${params}`, { headers: HEADERS });
@@ -532,13 +535,17 @@ async function load() {
     }
   }
 
+  const LF_TAG_LABELS = { 'magazine-cover':'Magazine Cover', 'dispatch':'Dispatch', 'profile':'Profile', 'feature':'Feature' };
+
   function longformHTML(p) {
     const ctx = p.context ? `<p class="pdf-sub">${p.context}</p>` : (p.sub ? `<p class="pdf-sub">${p.sub}</p>` : '');
     const date = formatDate(p.date) ? `<span class="item-date">${formatDate(p.date)}</span>` : '';
+    const tag = p.tag && LF_TAG_LABELS[p.tag] ? `<span class="article-tag tag-magazine" style="margin-bottom:6px;display:inline-block;">${LF_TAG_LABELS[p.tag]}</span><br>` : '';
     const thumb = p.thumbnail_url && p.thumbnail_url.trim() ? `<div class="pdf-icon"><img src="${p.thumbnail_url}" alt="${p.title}"></div>` : '';
     return `<div class="pdf-item" onclick="openPDF('${p.url||'#'}','${(p.title||'').replace(/'/g,"\\'")}')">
       ${thumb}
       <div style="flex:1;">
+        ${tag}
         <p class="pdf-title">${p.title}</p>
         ${ctx}${date}
       </div>

@@ -133,6 +133,8 @@
               <option value="front">Front page</option>
               <option value="magazine">Magazine</option>
               <option value="exclusive">Exclusive</option>
+              <option value="column">Column</option>
+              <option value="analysis">Analysis</option>
             </select>
           </div>
           <div><label>Date</label><input type="date" id="new-date"></div>
@@ -191,6 +193,13 @@
       <div class="add-form">
         <p class="add-form-title">Add longform</p>
         <label>Title</label><input type="text" id="new-lf-title" placeholder="Piece title">
+        <label>Tag</label>
+        <select id="new-lf-tag">
+          <option value="magazine-cover">Magazine Cover</option>
+          <option value="dispatch">Dispatch</option>
+          <option value="profile">Profile</option>
+          <option value="feature">Feature</option>
+        </select>
         <label>Publication</label><input type="text" id="new-lf-sub" placeholder="FT Weekend Magazine">
         <label>Cover image</label>
         <input type="file" id="new-lf-thumb-file" accept="image/*" style="font-size:12px;color:var(--gray);width:100%;padding:8px 0;">
@@ -235,7 +244,7 @@ const SB_URL = 'https://uapkjifuwudofxxnntdm.supabase.co';
 const SB_KEY = 'sb_publishable_aGRROJn72rZJWamher3uIg_qdWwhq8a';
 
 let authToken = null;
-const TAG_LABELS = { scoop:'Scoop', front:'Front page', magazine:'Magazine', exclusive:'Exclusive' };
+const TAG_LABELS = { scoop:'Scoop', front:'Front page', magazine:'Magazine', exclusive:'Exclusive', column:'Column', analysis:'Analysis' };
 
 const H = (extra={}) => ({
   'apikey': SB_KEY,
@@ -432,6 +441,7 @@ async function addLongform() {
 
   await sbPost('longform', {
     title,
+    tag: document.getElementById('new-lf-tag').value,
     sub: document.getElementById('new-lf-sub').value,
     thumbnail_url: null,
     context: document.getElementById('new-lf-context').value,
@@ -501,6 +511,7 @@ async function saveLongform(id) {
 
   await sbPatch('longform', id, {
     title: document.getElementById('lft-'+id).value,
+    tag: document.getElementById('lftag-'+id) ? document.getElementById('lftag-'+id).value : null,
     sub: document.getElementById('lfs-'+id).value,
     thumbnail_url: thumbnailUrl,
     context: document.getElementById('lfc-'+id).value,
@@ -542,6 +553,8 @@ async function loadArticles() {
               <option value="front" ${x.tag==='front'?'selected':''}>Front page</option>
               <option value="magazine" ${x.tag==='magazine'?'selected':''}>Magazine</option>
               <option value="exclusive" ${x.tag==='exclusive'?'selected':''}>Exclusive</option>
+              <option value="column" ${x.tag==='column'?'selected':''}>Column</option>
+              <option value="analysis" ${x.tag==='analysis'?'selected':''}>Analysis</option>
             </select>
           </div>
           <div><label>Date</label><input type="date" id="ey-${x.id}"></div>
@@ -649,6 +662,13 @@ async function loadLongform() {
       <div id="lfedit-${x.id}" class="edit-form" style="display:none;">
         <label>Title</label>
         <input type="text" id="lft-${x.id}" value="${(x.title||'').replace(/"/g,'&quot;')}">
+        <label>Tag</label>
+        <select id="lftag-${x.id}">
+          <option value="magazine-cover" ${x.tag==='magazine-cover'?'selected':''}>Magazine Cover</option>
+          <option value="dispatch" ${x.tag==='dispatch'?'selected':''}>Dispatch</option>
+          <option value="profile" ${x.tag==='profile'?'selected':''}>Profile</option>
+          <option value="feature" ${x.tag==='feature'?'selected':''}>Feature</option>
+        </select>
         <label>Publication</label>
         <input type="text" id="lfs-${x.id}" value="${(x.sub||'').replace(/"/g,'&quot;')}">
         <label>Thumbnail URL</label>
