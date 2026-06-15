@@ -75,7 +75,7 @@
   .article-title { font-family: 'EB Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.2; color: var(--black); flex: 1; transition: opacity 0.15s; }
   .article-title:hover { opacity: 0.7; }
   .item-date { font-size: 11px; color: var(--lighter-gray); font-weight: 300; margin-top: 6px; display: block; }
-  .article-context { font-size: 15px; color: var(--gray); line-height: 1.65; font-weight: 300; margin-top: 4px; }
+  .article-context { font-size: 13px; color: var(--gray); line-height: 1.7; font-weight: 300; margin-top: 4px; }
   .video-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 0.5px solid var(--border); transition: opacity 0.15s; }
   .video-item:first-child { border-top: 0.5px solid var(--border); }
   .video-item:hover { opacity: 0.7; }
@@ -90,7 +90,7 @@
   .pdf-icon img { width: 72px; height: auto; display: block; border-radius: 2px; box-shadow: 0 1px 4px rgba(0,0,0,0.12); }
   .video-thumb { width: 60px; height: 44px; background: var(--light-gray); border-radius: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .pdf-title { font-family: 'EB Garamond', serif; font-size: 30px; font-weight: 400; line-height: 1.2; flex: 1; }
-  .pdf-sub { font-size: 15px; color: var(--gray); margin-top: 4px; font-weight: 300; line-height: 1.65; }
+  .pdf-sub { font-size: 13px; color: var(--gray); margin-top: 4px; font-weight: 300; line-height: 1.7; }
   .ig-embed-wrap { margin-top: 10px; max-width: 540px; }
   .ig-embed-wrap blockquote { margin: 0 !important; }
 
@@ -102,12 +102,7 @@
   .pdf-modal-close { font-size: 22px; color: var(--gray); cursor: pointer; line-height: 1; background: none; border: none; padding: 0 4px; }
   .pdf-modal-close:hover { color: var(--black); }
   .pdf-modal iframe { flex: 1; width: 100%; border: none; }
-  footer { position: sticky; bottom: 0; z-index: 50; background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-top: 0.5px solid var(--border); padding: 1rem 2.5rem; display: flex; justify-content: space-between; align-items: center; }
-  .footer-name { font-family: 'EB Garamond', serif; font-size: 13px; color: var(--gray); }
-  .footer-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-  .footer-links { display: flex; gap: 1.5rem; list-style: none; }
-  .footer-links a { font-size: 11px; color: var(--gray); letter-spacing: .06em; text-transform: uppercase; transition: color 0.15s; }
-  .footer-links a:hover { color: var(--black); }
+  footer { display: none; }
   .ft-all { font-size: 11px; color: var(--gray); }
   .ft-all a { text-decoration: underline; text-underline-offset: 3px; }
   .ft-all a:hover { color: var(--black); }
@@ -229,7 +224,7 @@
 <body>
 
 <nav class="nav">
-  <span class="nav-name">Marianna Giusti</span>
+  <span class="nav-name" onclick="showPage('home', document.querySelector('.nav-links a'))" style="cursor:pointer;">Marianna Giusti</span>
   <ul class="nav-links" id="nav-links">
     <li><a class="active" onclick="showPage('home',this)">Home</a></li>
     <li><a onclick="showPage('portfolio',this)">Portfolio</a></li>
